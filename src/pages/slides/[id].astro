@@ -9,8 +9,9 @@ export async function getStaticPaths() {
         slides = [{ id: 'sample-presentation' }];
     }
 
+
     return slides.map(slide => ({
-        params: { id: slide.id }
+        params: { id: encodeURIComponent(slide.id) }
     }));
 }
 
