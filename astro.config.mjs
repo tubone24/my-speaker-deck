@@ -12,7 +12,7 @@ export default defineConfig({
     site: isGitHubPages
         ? `https://${process.env.GITHUB_REPOSITORY_OWNER}.github.io/${repositoryName}/`
         : 'http://localhost:3000',
-    base: isGitHubPages ? `/${repositoryName}/` : '/',
+    base: isGitHubPages ? `/${repositoryName}` : '/',
     output: 'static',
     build: {
         format: 'file',
