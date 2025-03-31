@@ -5,10 +5,12 @@ import { exec } from 'child_process';
 import { PDFDocument } from 'pdf-lib';
 import sharp from 'sharp';
 import os from 'os'; // CPUコア数取得用
+import crypto from 'crypto';
 
 // Types
 interface SlideInfo {
-    id: string;
+    id: string;          // URL安全な識別子
+    originalId: string;  // 元のファイル名
     title: string;
     description?: string;
     pageCount: number;
@@ -45,6 +47,24 @@ const MAX_CONCURRENT_PDFS = Math.max(1, os.cpus().length - 1);
 
 // スライド情報を保存するリスト
 const slidesData: SlideInfo[] = [];
+
+// ファイル名をURL安全なIDに変換する関数
+function generateSafeId(filename: string): string {
+    // 方法1: シンプルなスラッグ化
+    const slug = filename
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')  // 英数字、スペース、ハイフン以外を削除
+        .replace(/[\s_-]+/g, '-')  // スペースとアンダースコアをハイフンに変換
+        .replace(/^-+|-+$/g, '');  // 先頭と末尾のハイフンを削除
+
+    // スラッグが短すぎる場合は、ハッシュを追加
+    if (slug.length < 3) {
+        const hash = crypto.createHash('md5').update(filename).digest('hex').substring(0, 6);
+        return `slide-${hash}`;
+    }
+
+    return slug;
+}
 
 // ディレクトリを作成する関数
 function ensureDir(dir: string): void {
@@ -134,7 +154,9 @@ async function createThumbnail(inputPath: string, outputPath: string): Promise<v
 // 単一のPDFを処理する関数
 async function processPdf(pdfFile: string): Promise<SlideInfo> {
     const filename = path.basename(pdfFile);
-    const slideId = path.basename(filename, '.pdf');
+    const originalId = path.basename(filename, '.pdf');
+    // URL安全なIDを生成
+    const slideId = generateSafeId(originalId);
     const slideDir = path.join(IMAGE_DIR, slideId);
 
     // スライド用のディレクトリを作成
@@ -203,10 +225,11 @@ async function processPdf(pdfFile: string): Promise<SlideInfo> {
     const metadata = await loadMetadataFromJson(pdfFile);
     const stats = fs.statSync(pdfFile);
 
-    // スライド情報を返す
+    // スライド情報を返す（URL安全なIDを使用）
     return {
         id: slideId,
-        title: slideId.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        originalId: originalId,
+        title: metadata.title || originalId.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
         description: metadata.description || "",
         date: metadata.date ? new Date(metadata.date).toISOString() : stats.mtime.toISOString(),
         location: metadata.location || null,
