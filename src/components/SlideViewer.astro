@@ -1,0 +1,53 @@
+---
+// スライドビューアコンポーネント
+const { images, title, initialPage = 1 } = Astro.props;
+---
+
+<div class="slide-viewer">
+    <div class="slides-container">
+        {images.map((image, index) => (
+                <div class="slide-image"
+                     role="img"
+                     aria-label={`${title} - スライド ${index + 1}`}
+                     style={`display: ${index + 1 === initialPage ? 'flex' : 'none'};`}>
+                    <img src={image} alt={`スライド ${index + 1}`} loading={index + 1 === initialPage || Math.abs(index + 1 - initialPage) <= 1 ? 'eager' : 'lazy'} />
+                </div>
+        ))}
+    </div>
+</div>
+
+<style>
+    .slide-viewer {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        background-color: #121212;
+    }
+
+    .slides-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .slide-image {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .slide-image img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+    }
+</style>

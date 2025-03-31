@@ -1,0 +1,19 @@
+---
+export async function getStaticPaths() {
+    // スライドデータを読み込み
+    let slides = [];
+    try {
+        slides = await import('../../data/slides.json').then(module => module.default);
+    } catch (e) {
+        console.warn('スライドデータの読み込みに失敗しました:', e);
+        slides = [{ id: 'sample-presentation' }];
+    }
+
+    return slides.map(slide => ({
+        params: { id: slide.id }
+    }));
+}
+
+// リダイレクト：/slides/[id] -> /slides/[id]/1
+return Astro.redirect(`/slides/${Astro.params.id}/1`);
+---

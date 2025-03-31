@@ -1,0 +1,110 @@
+---
+// サムネイルリストコンポーネント
+const { images, count, currentPage = 1 } = Astro.props;
+---
+
+<div class="thumbnails-container">
+    <div class="thumbnails-scroller">
+        {images.map((image, index) => (
+                <a href={`/slides/${Astro.params.id}/${index + 1}`} class={`thumbnail ${index + 1 === currentPage ? 'active' : ''}`} data-index={index}>
+                    <img src={image} alt={`サムネイル ${index + 1}`} loading="lazy" />
+                    <span class="thumbnail-number">{index + 1}</span>
+                </a>
+        ))}
+    </div>
+</div>
+
+<script>
+    // もっと効果的な方法：スクロール位置を直接計算して設定
+    document.addEventListener('DOMContentLoaded', () => {
+        // 少し遅延を入れてDOMが完全に描画された後に実行
+        setTimeout(() => {
+            const thumbnailsScroller = document.querySelector('.thumbnails-scroller');
+            const activeThumb = document.querySelector('.thumbnail.active');
+
+            if (thumbnailsScroller && activeThumb) {
+                // スクローラーの幅とサムネイルの位置を取得
+                const scrollerWidth = thumbnailsScroller.offsetWidth;
+                const thumbLeft = activeThumb.offsetLeft;
+                const thumbWidth = activeThumb.offsetWidth;
+
+                // アクティブなサムネイルが中央に来るようにスクロール位置を設定
+                thumbnailsScroller.scrollLeft = thumbLeft - (scrollerWidth / 2) + (thumbWidth / 2);
+            }
+        }, 0);
+    });
+</script>
+
+<style>
+.thumbnails-container {
+    background-color: #2c3e50;
+    padding: 0.8rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+.thumbnails-scroller {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: #95a5a6 #34495e;
+    }
+
+.thumbnails-scroller::-webkit-scrollbar {
+    height: 6px;
+    }
+
+.thumbnails-scroller::-webkit-scrollbar-track {
+    background: #34495e;
+    }
+
+.thumbnails-scroller::-webkit-scrollbar-thumb {
+    background-color: #95a5a6;
+    border-radius: 3px;
+    }
+
+.thumbnail {
+    position: relative;
+    height: 70px;
+    min-width: 50px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+    text-decoration: none;
+    display: flex;          /* Flexbox追加 */
+    justify-content: center; /* 水平方向中央揃え */
+    align-items: center;     /* 垂直方向中央揃え */
+    }
+
+.thumbnail:hover {
+    opacity: 0.9;
+    }
+
+.thumbnail.active {
+    border-color: #3498db;
+    opacity: 1;
+    }
+
+.thumbnail img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;   /* coverからcontainに変更 */
+    max-width: none;       /* 幅の制限を解除 */
+    }
+
+.thumbnail-number {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 5px;
+    border-top-left-radius: 4px;
+    }
+</style>

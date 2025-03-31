@@ -1,11 +1,91 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import SlideCard from '../components/SlideCard.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// スライドデータを読み込み
+let slides = [];
+try {
+	slides = await import('../data/slides.json').then(module => module.default);
+} catch (e) {
+	console.warn('スライドデータの読み込みに失敗しました:', e);
+
+	// サンプルデータ
+	slides = [
+		{
+			id: 'sample-presentation',
+			title: 'サンプルプレゼンテーション',
+			pageCount: 5,
+			date: new Date().toISOString(),
+			thumbnail: '/images/placeholder.jpg'
+		}
+	];
+}
+
+// 日付で降順ソート
+slides.sort((a, b) => new Date(b.date) - new Date(a.date));
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="tubone's speaker deck">
+	<div class="slides-header">
+		<h1>tubone's speaker deck</h1>
+		<p>登壇などで発表したスライド一覧です</p>
+	</div>
+
+	<div class="slides-grid">
+		{slides.map(slide => (
+			<SlideCard slide={slide} />
+		))}
+
+		{slides.length === 0 && (
+			<div class="no-slides">
+				<p>スライドがありません。</p>
+				<p>PDFをpublic/pdfsフォルダに追加してください。</p>
+			</div>
+		)}
+	</div>
 </Layout>
+
+<style>
+	.slides-header {
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+
+	.slides-header h1 {
+		font-size: 2.5rem;
+		margin-bottom: 0.5rem;
+		color: #2c3e50;
+	}
+
+	.slides-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 2rem;
+	}
+
+	.no-slides {
+		grid-column: 1 / -1;
+		text-align: center;
+		padding: 3rem;
+		background-color: #f8f9fa;
+		border-radius: 8px;
+		color: #6c757d;
+	}
+
+	@media (max-width: 768px) {
+		.slides-grid {
+			grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+			gap: 1.5rem;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.slides-header h1 {
+			font-size: 2rem;
+		}
+
+		.slides-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

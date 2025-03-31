@@ -1,0 +1,812 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import SlideViewer from '../../../components/SlideViewer.astro';
+import Thumbnails from '../../../components/Thumbnails.astro';
+
+// getStaticPaths関数を追加（ビルド時に生成するパスを定義）
+export async function getStaticPaths() {
+    // スライドデータを読み込み
+    let slides = [];
+    try {
+        slides = await import('../../../data/slides.json').then(module => module.default);
+    } catch (e) {
+        console.warn('スライドデータの読み込みに失敗しました:', e);
+        // エラーが発生した場合、少なくとも1つのパスを返す
+        return [
+            {
+                params: { id: 'sample-presentation', page: '1' },
+                props: {
+                    slide: {
+                        id: 'sample-presentation',
+                        title: 'サンプルプレゼンテーション',
+                        description: 'サンプルの説明文です。',
+                        pageCount: 5,
+                        date: new Date().toISOString(),
+                        location: {
+                            text: 'サンプルイベント',
+                            url: 'https://example.com/event'
+                        },
+                        thumbnail: '/images/placeholder.jpg',
+                        pdfPath: '/pdfs/sample.pdf'
+                    },
+                    pageNum: 1
+                }
+            }
+        ];
+    }
+
+    // 各スライドの各ページに対応するパスを生成
+    const paths = [];
+
+    slides.forEach(slide => {
+        // 各ページのパスを生成
+        for (let i = 1; i <= slide.pageCount; i++) {
+            paths.push({
+                params: { id: slide.id, page: i.toString() },
+                props: {
+                    slide,
+                    pageNum: i
+                }
+            });
+        }
+    });
+
+    return paths;
+}
+
+// propsからスライドデータとページ番号を取得
+const { slide, pageNum } = Astro.props;
+
+// 現在のページ番号（数値型）
+const currentPage = parseInt(pageNum);
+
+// 画像パスの生成
+const currentImage = `/images/slides/${slide.id}/${currentPage}.jpg`;
+const slideImages = [];
+for (let i = 1; i <= slide.pageCount; i++) {
+    slideImages.push(`/images/slides/${slide.id}/${i}.jpg`);
+}
+
+// OGP用の画像URL
+const ogImageUrl = currentImage;
+
+// 日付をフォーマット
+const slideDate = new Date(slide.date).toLocaleDateString('ja-JP', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+});
+
+// ページタイトル
+const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`;
+---
+
+<Layout
+        title={pageTitle}
+        description={slide.description || `${slide.title} - ${slideDate}（${currentPage}/${slide.pageCount}ページ）`}
+        image={ogImageUrl}
+        fullWidth={true}
+>
+    <div class="slide-viewer-container">
+        <header class="slide-header">
+            <div class="container">
+                <div class="header-left">
+                    <a href="/" class="back-button">← 一覧に戻る</a>
+                    <div class="slide-info">
+                        <h1>{slide.title}</h1>
+                        {slide.description && (
+                                <p class="slide-description">{slide.description}</p>
+                        )}
+                    </div>
+                </div>
+                <div class="header-right">
+          <span class="page-counter">
+            <span id="current-page">{currentPage}</span> / <span id="total-pages">{slide.pageCount}</span>
+          </span>
+                </div>
+            </div>
+        </header>
+
+        <SlideViewer images={slideImages} title={slide.title} initialPage={currentPage} />
+
+        <div class="progress-bar-container">
+            <div class="progress-bar" style={`width: ${(currentPage / slide.pageCount) * 100}%`}></div>
+            <div class="progress-counter">{currentPage} / {slide.pageCount}</div>
+        </div>
+
+        <button id="thumbnails-toggle" class="thumbnails-toggle" aria-label="サムネイル表示切替" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="18 15 12 9 6 15"></polyline>
+            </svg>
+        </button>
+
+        <div class="slide-controls">
+            <div class="container">
+                <div class="control-buttons">
+                    <a href={currentPage > 1 ? `/slides/${slide.id}/${currentPage - 1}` : '#'}
+                       class="btn btn-icon"
+                       aria-disabled={currentPage <= 1}
+                       aria-label="前のスライド"
+                       id="prev-slide">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                            <path d="m15 18-6-6 6-6"/>
+                        </svg>
+                    </a>
+
+                    <a href={currentPage < slide.pageCount ? `/slides/${slide.id}/${currentPage + 1}` : '#'}
+                       class="btn btn-icon"
+                       aria-disabled={currentPage >= slide.pageCount}
+                       aria-label="次のスライド"
+                       id="next-slide">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                            <path d="m9 18 6-6-6-6"/>
+                        </svg>
+                    </a>
+
+                    <button id="fullscreen" class="btn btn-icon btn-primary" aria-label="全画面表示">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-fullscreen">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3"></path>
+                            <path d="M21 8V5a2 2 0 0 0-2-2h-3"></path>
+                            <path d="M3 16v3a2 2 0 0 0 2 2h3"></path>
+                            <path d="M16 21h3a2 2 0 0 0 2-2v-3"></path>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-exit-fullscreen" style="display: none;">
+                            <path d="M8 3v3a2 2 0 0 1-2 2H3"></path>
+                            <path d="M21 8h-3a2 2 0 0 1-2-2V3"></path>
+                            <path d="M3 16h3a2 2 0 0 1 2 2v3"></path>
+                            <path d="M16 21v-3a2 2 0 0 1 2-2h3"></path>
+                        </svg>
+                        <span class="btn-text">全画面</span>
+                    </button>
+                </div>
+
+                <div class="slide-meta">
+                    <span class="date">{slideDate}</span>
+
+                    {slide.location && (
+                            <a href={slide.location.url} class="location-link" target="_blank" rel="noopener">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-small">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                                {slide.location.text}
+                            </a>
+                    )}
+
+                    <a href={slide.pdfPath} class="download-link" download>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-small">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        PDFをダウンロード
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="thumbnails-wrapper" aria-hidden="true">
+            <Thumbnails images={slideImages} count={slide.pageCount} currentPage={currentPage} />
+        </div>
+    </div>
+</Layout>
+
+<script define:vars={{ currentPage, slide, slideImages }}>
+    // 現在のページ番号とスライド情報をJSに渡す
+    let pageNum = parseInt(currentPage);
+    const totalPages = slide.pageCount;
+
+    // スライドショーのインタラクティブ機能
+    document.addEventListener('DOMContentLoaded', () => {
+        // 必要な要素の取得
+        const slideImages = document.querySelectorAll('.slide-image');
+        const fullscreenButton = document.getElementById('fullscreen');
+        const slideContainer = document.querySelector('.slide-viewer-container');
+        const iconFullscreen = document.querySelector('.icon-fullscreen');
+        const iconExitFullscreen = document.querySelector('.icon-exit-fullscreen');
+        const currentPageEl = document.getElementById('current-page');
+        const prevButton = document.getElementById('prev-slide');
+        const nextButton = document.getElementById('next-slide');
+
+        // サムネイルトグル機能関連
+        const thumbnailsToggle = document.getElementById('thumbnails-toggle');
+        const thumbnailsWrapper = document.querySelector('.thumbnails-wrapper');
+
+        // サムネイル状態の初期化（history.stateから）
+        const state = history.state || {};
+        const isThumbnailsOpen = state.thumbnailsOpen || false;
+
+        if (isThumbnailsOpen) {
+            thumbnailsWrapper.classList.add('open');
+            thumbnailsToggle.classList.add('open');
+            thumbnailsToggle.setAttribute('aria-expanded', 'true');
+            thumbnailsWrapper.setAttribute('aria-hidden', 'false');
+        }
+
+        // サムネイル表示切替
+        thumbnailsToggle.addEventListener('click', () => {
+            thumbnailsWrapper.classList.toggle('open');
+            thumbnailsToggle.classList.toggle('open');
+
+            const isExpanded = thumbnailsWrapper.classList.contains('open');
+            thumbnailsToggle.setAttribute('aria-expanded', isExpanded);
+            thumbnailsWrapper.setAttribute('aria-hidden', !isExpanded);
+
+            // 現在の状態を更新
+            updateHistory(pageNum, isExpanded);
+        });
+
+        // 進捗バーの更新関数
+        function updateProgressBar(pageNum) {
+            const progressBar = document.querySelector('.progress-bar');
+            const progressCounter = document.querySelector('.progress-counter');
+            if (progressBar) {
+                progressBar.style.width = `${(pageNum / totalPages) * 100}%`;
+            }
+            if (progressCounter) {
+                progressCounter.textContent = `${pageNum} / ${totalPages}`;
+            }
+        }
+
+        // スライド表示を更新する関数
+        function updateSlideDisplay(newPageNum) {
+            // 現在のスライドを非表示
+            slideImages[pageNum - 1].style.display = 'none';
+
+            // 新しいスライドを表示
+            pageNum = newPageNum;
+            slideImages[pageNum - 1].style.display = 'flex';
+
+            // ページカウンターを更新
+            currentPageEl.textContent = pageNum;
+
+            // ナビゲーションボタンの状態を更新
+            prevButton.setAttribute('aria-disabled', pageNum <= 1);
+            nextButton.setAttribute('aria-disabled', pageNum >= totalPages);
+
+            // 進捗バーの更新
+            updateProgressBar(pageNum);
+
+            // サムネイルの選択状態を更新
+            updateThumbnailSelection();
+        }
+
+        // サムネイルの選択状態を更新
+        function updateThumbnailSelection() {
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach((thumb, idx) => {
+                if (idx + 1 === pageNum) {
+                    thumb.classList.add('active');
+
+                    // スムーズなスクロールを避けて即時にスクロール位置を設定
+                    const thumbnailsScroller = thumb.closest('.thumbnails-scroller');
+                    if (thumbnailsScroller) {
+                        setTimeout(() => {
+                            const scrollerWidth = thumbnailsScroller.offsetWidth;
+                            const thumbLeft = thumb.offsetLeft;
+                            const thumbWidth = thumb.offsetWidth;
+                            thumbnailsScroller.scrollLeft = thumbLeft - (scrollerWidth / 2) + (thumbWidth / 2);
+                        }, 0);
+                    }
+                } else {
+                    thumb.classList.remove('active');
+                }
+            });
+        }
+
+        // History APIで状態を更新
+        function updateHistory(pageNum, thumbnailsOpen) {
+            const state = {
+                pageNum: pageNum,
+                thumbnailsOpen: thumbnailsOpen || thumbnailsWrapper.classList.contains('open')
+            };
+            const url = `/slides/${slide.id}/${pageNum}`;
+            history.replaceState(state, '', url);
+        }
+
+        // スライドを前に移動
+        function goToPreviousSlide(e) {
+            if (e) e.preventDefault();
+            if (pageNum > 1) {
+                const newPageNum = pageNum - 1;
+                const isThumbnailsOpen = thumbnailsWrapper.classList.contains('open');
+
+                // URLを更新（履歴に追加）
+                const state = { pageNum: newPageNum, thumbnailsOpen: isThumbnailsOpen };
+                const url = `/slides/${slide.id}/${newPageNum}`;
+                history.pushState(state, '', url);
+
+                // UI更新
+                updateSlideDisplay(newPageNum);
+            }
+        }
+
+        // スライドを次に移動
+        function goToNextSlide(e) {
+            if (e) e.preventDefault();
+            if (pageNum < totalPages) {
+                const newPageNum = pageNum + 1;
+                const isThumbnailsOpen = thumbnailsWrapper.classList.contains('open');
+
+                // URLを更新（履歴に追加）
+                const state = { pageNum: newPageNum, thumbnailsOpen: isThumbnailsOpen };
+                const url = `/slides/${slide.id}/${newPageNum}`;
+                history.pushState(state, '', url);
+
+                // UI更新
+                updateSlideDisplay(newPageNum);
+            }
+        }
+
+        // 特定のスライドへ移動
+        function goToSlide(newPageNum, e) {
+            if (e) e.preventDefault();
+            if (newPageNum >= 1 && newPageNum <= totalPages && newPageNum !== pageNum) {
+                const isThumbnailsOpen = thumbnailsWrapper.classList.contains('open');
+
+                // URLを更新（履歴に追加）
+                const state = { pageNum: newPageNum, thumbnailsOpen: isThumbnailsOpen };
+                const url = `/slides/${slide.id}/${newPageNum}`;
+                history.pushState(state, '', url);
+
+                // UI更新
+                updateSlideDisplay(newPageNum);
+            }
+        }
+
+        // 全画面表示の切り替え
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                slideContainer.requestFullscreen().catch(err => {
+                    console.error(`全画面表示に失敗しました: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // ブラウザの戻る・進むボタン対応
+        window.addEventListener('popstate', (e) => {
+            if (e.state) {
+                // 戻る/進むボタンで状態を復元
+                const newPageNum = e.state.pageNum || 1;
+
+                // サムネイル状態を復元
+                if (e.state.thumbnailsOpen) {
+                    thumbnailsWrapper.classList.add('open');
+                    thumbnailsToggle.classList.add('open');
+                    thumbnailsToggle.setAttribute('aria-expanded', 'true');
+                    thumbnailsWrapper.setAttribute('aria-hidden', 'false');
+                } else {
+                    thumbnailsWrapper.classList.remove('open');
+                    thumbnailsToggle.classList.remove('open');
+                    thumbnailsToggle.setAttribute('aria-expanded', 'false');
+                    thumbnailsWrapper.setAttribute('aria-hidden', 'true');
+                }
+
+                // スライド表示を更新
+                updateSlideDisplay(newPageNum);
+            }
+        });
+
+        // 全画面表示ボタンのイベント
+        fullscreenButton.addEventListener('click', toggleFullscreen);
+
+        // 全画面表示の変更を検知
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                slideContainer.classList.add('fullscreen-mode');
+                iconFullscreen.style.display = 'none';
+                iconExitFullscreen.style.display = 'block';
+                if (fullscreenButton.querySelector('.btn-text')) {
+                    fullscreenButton.querySelector('.btn-text').textContent = '終了';
+                }
+            } else {
+                slideContainer.classList.remove('fullscreen-mode');
+                iconFullscreen.style.display = 'block';
+                iconExitFullscreen.style.display = 'none';
+                if (fullscreenButton.querySelector('.btn-text')) {
+                    fullscreenButton.querySelector('.btn-text').textContent = '全画面';
+                }
+            }
+        });
+
+        // ナビゲーションボタンのイベント
+        prevButton.addEventListener('click', goToPreviousSlide);
+        nextButton.addEventListener('click', goToNextSlide);
+
+        // サムネイルのクリックイベント
+        document.querySelectorAll('.thumbnail').forEach((thumb, idx) => {
+            thumb.addEventListener('click', (e) => {
+                e.preventDefault();
+                goToSlide(idx + 1, e);
+            });
+        });
+
+        // キーボードショートカット
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                goToPreviousSlide();
+            } else if (e.key === 'ArrowRight') {
+                goToNextSlide();
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            }
+        });
+
+        // 初期状態を設定
+        updateHistory(pageNum, isThumbnailsOpen);
+        updateProgressBar(pageNum);
+    });
+</script>
+
+<style>
+.slide-viewer-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #1a1a1a;
+    color: white;
+    }
+
+.slide-header {
+    background-color: #2c3e50;
+    padding: 0.8rem 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+.slide-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    }
+
+.back-button {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    }
+
+.back-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    }
+
+.slide-header h1 {
+    font-size: 1.4rem;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60vw;
+    }
+
+.page-counter {
+    font-size: 1rem;
+    font-weight: 600;
+    }
+
+.slide-controls {
+    background-color: #2c3e50;
+    padding: 0.8rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+.slide-controls .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+
+.control-buttons {
+    display: flex;
+    gap: 0.5rem;
+    }
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+    }
+
+.btn[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    }
+
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+    }
+
+.btn-primary:hover:not([aria-disabled="true"]) {
+    background-color: #2980b9;
+    }
+
+.btn-secondary {
+    background-color: #95a5a6;
+    color: white;
+    }
+
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background-color: #3498db; /* すべてのボタンで同じ背景色 */
+    color: white;
+    transition: all 0.2s ease;
+    }
+
+/* ボタンのホバー効果を統一 */
+.btn-icon:hover:not([aria-disabled="true"]) {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+.btn-secondary:hover {
+    background-color: #7f8c8d;
+    }
+
+.slide-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+    align-items: center;
+    }
+
+.date {
+    color: #bdc3c7;
+    }
+
+.download-link {
+    color: #3498db;
+    text-decoration: none;
+    }
+
+.download-link:hover {
+    text-decoration: underline;
+    }
+
+/* フルスクリーンモード */
+.fullscreen-mode .slide-header,
+.fullscreen-mode .slide-controls,
+.fullscreen-mode .thumbnails-container {
+    display: none;
+    }
+
+.fullscreen-mode .slide-viewer {
+    height: 100vh;
+    }
+
+/* アイコンボタンのスタイル */
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    color: #fff;
+    transition: all 0.2s ease;
+    }
+
+.icon {
+    width: 24px;
+    height: 24px;
+    }
+
+.icon-small {
+    width: 18px;
+    height: 18px;
+    margin-right: 0.3rem;
+    vertical-align: middle;
+    }
+
+/* ダウンロードリンクのスタイル改善 */
+.download-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.6rem;
+    background-color: rgba(52, 152, 219, 0.2);
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    }
+
+.download-link:hover {
+    background-color: rgba(52, 152, 219, 0.3);
+    text-decoration: none;
+    }
+
+/* ボタンのホバーとアクティブ状態 */
+.btn-icon:hover:not([aria-disabled="true"]) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+.btn-icon:active:not([aria-disabled="true"]) {
+    transform: translateY(0);
+    }
+
+/* 進捗バーのスタイル */
+.progress-bar-container {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    position: relative;
+    margin-bottom: 8px;
+    }
+
+.progress-bar {
+    height: 100%;
+    background-color: #3498db;
+    transition: width 0.3s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    }
+
+/* 進捗カウンターのスタイル */
+.progress-counter {
+    position: absolute;
+    right: 10px;
+    top: -22px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    }
+
+/* サムネイルトグルボタンのスタイル */
+.thumbnails-toggle {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    background-color: #2c3e50;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    padding: 5px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.3s ease;
+    }
+
+.thumbnails-toggle svg {
+    transition: transform 0.3s ease;
+    }
+
+.thumbnails-toggle.open svg {
+    transform: rotate(180deg);
+    }
+
+/* サムネイルラッパーのスタイル */
+.thumbnails-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background-color: #2c3e50;
+    }
+
+.thumbnails-wrapper.open {
+    max-height: 120px; /* サムネイルの最大高さ */
+    }
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+    .slide-header h1 {
+    font-size: 1.2rem;
+    max-width: 40vw;
+    }
+
+    .slide-controls .container {
+    flex-direction: column;
+    gap: 0.8rem;
+    }
+
+    .control-buttons {
+    width: 100%;
+    justify-content: space-between;
+    }
+
+    .slide-meta {
+    width: 100%;
+    justify-content: space-between;
+    }
+
+    .btn-text {
+    display: none; /* モバイルではアイコンのみ表示 */
+    }
+
+    .btn-icon {
+    padding: 0.6rem;
+    }
+
+    .control-buttons {
+    gap: 0.8rem;
+    }
+    }
+
+@media (max-width: 480px) {
+    .header-left {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.8rem;
+    }
+
+    .slide-header h1 {
+    font-size: 1.1rem;
+    max-width: 50vw;
+    }
+    }
+
+.slide-info {
+    display: flex;
+    flex-direction: column;
+    }
+
+.slide-description {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0.2rem 0 0 0;
+    max-width: 60vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    }
+
+.location-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.6rem;
+    background-color: rgba(46, 204, 113, 0.2);
+    border-radius: 4px;
+    color: #2ecc71;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    }
+
+.location-link:hover {
+    background-color: rgba(46, 204, 113, 0.3);
+    text-decoration: none;
+    }
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .slide-meta {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    }
+
+    .location-link, .download-link {
+    flex: 1 1 100%;
+    margin-top: 0.5rem;
+    text-align: center;
+    justify-content: center;
+    }
+    }
+</style>
