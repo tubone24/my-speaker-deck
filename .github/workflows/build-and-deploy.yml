@@ -44,16 +44,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y poppler-utils
 
-#      - name: Convert PDFs to images
-#        run: npm run convert
+      - name: Convert PDFs to images
+        run: npm run convert
 
       - name: Build Astro site
         run: npm run build
         env:
-          VITE_GITHUB_ACTIONS: true
+          GITHUB_ACTIONS: true
           NODE_OPTIONS: --max-old-space-size=4096
-          VITE_GITHUB_REPOSITORY_OWNER: ${{ github.event.repository.owner.login }}
-          VITE_GITHUB_REPOSITORY: ${{ github.event.repository.name }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.event.repository.owner.login }}
+          GITHUB_REPOSITORY: ${{ github.event.repository.name }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

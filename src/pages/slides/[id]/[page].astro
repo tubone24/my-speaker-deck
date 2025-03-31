@@ -61,10 +61,10 @@ const { slide, pageNum } = Astro.props;
 const currentPage = parseInt(pageNum);
 
 // 画像パスの生成
-const currentImage = `/images/slides/${slide.id}/${currentPage}.jpg`;
+const currentImage = `${import.meta.env.BASE_URL}/images/slides/${slide.id}/${currentPage}.jpg`;
 const slideImages = [];
 for (let i = 1; i <= slide.pageCount; i++) {
-    slideImages.push(`/images/slides/${slide.id}/${i}.jpg`);
+    slideImages.push(`${import.meta.env.BASE_URL}/images/slides/${slide.id}/${i}.jpg`);
 }
 
 // OGP用の画像URL

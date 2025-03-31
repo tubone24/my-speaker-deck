@@ -21,6 +21,7 @@ const ogImageURL = new URL(image, Astro.site);
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+	<base href={import.meta.env.BASE_URL}>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
