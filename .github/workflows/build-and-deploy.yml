@@ -50,10 +50,10 @@ jobs:
       - name: Build Astro site
         run: npm run build
         env:
-          GITHUB_ACTIONS: true
+          VITE_GITHUB_ACTIONS: true
           NODE_OPTIONS: --max-old-space-size=4096
-          GITHUB_REPOSITORY_OWNER: ${{ github.event.repository.owner.login }}
-          GITHUB_REPOSITORY: ${{ github.event.repository.name }}
+          VITE_GITHUB_REPOSITORY_OWNER: ${{ github.event.repository.owner.login }}
+          VITE_GITHUB_REPOSITORY: ${{ github.event.repository.name }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
