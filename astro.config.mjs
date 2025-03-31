@@ -7,6 +7,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 // 環境変数
 const isGitHubPages = process.env.VITE_GITHUB_ACTIONS === 'true';
 const repositoryName = process.env.VITE_GITHUB_REPOSITORY?.split('/')[1] || '';
+console.log(isGitHubPages)
 
 export default defineConfig({
     site: isGitHubPages
