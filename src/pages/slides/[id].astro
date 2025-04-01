@@ -16,5 +16,5 @@ export async function getStaticPaths() {
 }
 
 // リダイレクト：/slides/[id] -> /slides/[id]/1
-return Astro.redirect(`${import.meta.env.BASE_URL}/slides/${Astro.params.id}/1`);
+return Astro.redirect(`${Astro.site}slides/${Astro.params.id}/1`);
 ---

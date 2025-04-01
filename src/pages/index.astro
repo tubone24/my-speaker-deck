@@ -23,9 +23,10 @@ try {
 
 // 日付で降順ソート
 slides.sort((a, b) => new Date(b.date) - new Date(a.date));
+const image = 'ogp.png';
 ---
 
-<Layout title="tubone's speaker deck">
+<Layout title="tubone's speaker deck" image={image}>
 	<div class="slides-header">
 		<h1>tubone's speaker deck</h1>
 		<p>登壇などで発表したスライド一覧です</p>
