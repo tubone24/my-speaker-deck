@@ -54,4 +54,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages publish --project-name=YOUR_PROJECT_NAME ./dist
+          command: pages publish --project-name=slide-tubone24 ./dist
