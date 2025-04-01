@@ -10,7 +10,7 @@ const repositoryName = process.env.VITE_GITHUB_REPOSITORY?.split('/')[1] || '';
 
 export default defineConfig({
     site: isGitHubPages
-        ? `https://${process.env.VITE_GITHUB_REPOSITORY_OWNER}.github.io/${repositoryName}/`
+        ? 'https://slide-tubone24.pages.dev'
         : 'http://localhost:3000',
     base: isGitHubPages ? `/${repositoryName}` : '/',
     output: 'static',
