@@ -46,12 +46,12 @@ jobs:
           for pdf in public/pdfs/*.pdf; do
             file_size=$(stat -c%s "$pdf")
             if [ "$file_size" -gt $((25 * 1024 * 1024)) ]; then
-            echo "Compressing $pdf"
-            gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile="${pdf%.pdf}_compressed.pdf" "$pdf"
-            # 圧縮したファイルに置き換え
-            mv "${pdf%.pdf}_compressed.pdf" "$pdf"
-         fi
-         done
+              echo "Compressing $pdf"
+              gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile="${pdf%.pdf}_compressed.pdf" "$pdf"
+              # 圧縮したファイルに置き換え
+              mv "${pdf%.pdf}_compressed.pdf" "$pdf"
+            fi
+           done
 
       - name: Build Astro site
         run: npm run build
