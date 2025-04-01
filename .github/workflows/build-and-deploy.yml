@@ -36,10 +36,22 @@ jobs:
       - name: Install Poppler and other required tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y poppler-utils
+          sudo apt-get install -y poppler-utils ghostscript pdftk
 
 #      - name: Convert PDFs to images
 #        run: npm run convert
+
+      - name: compress pdf
+        run: |
+          for pdf in public/pdfs/*.pdf; do
+            file_size=$(stat -c%s "$pdf")
+            if [ "$file_size" -gt $((25 * 1024 * 1024)) ]; then
+            echo "Compressing $pdf"
+            gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile="${pdf%.pdf}_compressed.pdf" "$pdf"
+            # 圧縮したファイルに置き換え
+            mv "${pdf%.pdf}_compressed.pdf" "$pdf"
+         fi
+         done
 
       - name: Build Astro site
         run: npm run build
