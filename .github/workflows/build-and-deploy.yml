@@ -11,17 +11,11 @@ on:
 # GitHub Pagesへのデプロイに必要な権限設定
 permissions:
   contents: read
-  pages: write
   id-token: write
-
-# 同時デプロイメントを防止する設定
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  deployments: write
 
 jobs:
-  # ビルドジョブ
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -55,19 +49,9 @@ jobs:
           VITE_GITHUB_REPOSITORY_OWNER: ${{ github.event.repository.owner.login }}
           VITE_GITHUB_REPOSITORY: ${{ github.event.repository.name }}
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
         with:
-          path: ./dist
-
-  # デプロイジョブ
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages publish --project-name=YOUR_PROJECT_NAME ./dist
