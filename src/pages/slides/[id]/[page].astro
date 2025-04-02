@@ -2,15 +2,7 @@
 import Layout from '../../../layouts/Layout.astro';
 import SlideViewer from '../../../components/SlideViewer.astro';
 import Thumbnails from '../../../components/Thumbnails.astro';
-import {
-    FacebookShareButton,
-    LinkedInShareButton,
-    RedditShareButton,
-    TwitterShareButton,
-    SocialShare
-} from "astro-social-share";
-
-const SOCIAL_BUTTONS = [FacebookShareButton, LinkedInShareButton, RedditShareButton, TwitterShareButton];
+import SocialShare from '../../../components/SocialShare.astro';
 
 // getStaticPaths関数を追加（ビルド時に生成するパスを定義）
 export async function getStaticPaths() {
@@ -170,11 +162,13 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
                 </div>
 
                 <div class="slide-meta">
+
                     <SocialShare
-                            buttons={SOCIAL_BUTTONS}
-                            description={slide.description}
                             title={slide.title}
+                            description={slide.title}
+                            className="my-custom-share"
                     />
+
                     <span class="date">{slideDate}</span>
 
                     {slide.location && (
