@@ -45,6 +45,9 @@ const ogImageURL = new URL(image, Astro.site);
 	<meta property="twitter:title" content={title} />
 	<meta property="twitter:description" content={description} />
 	<meta property="twitter:image" content={ogImageURL} />
+	
+	<!-- RSS -->
+	<link rel="alternate" type="application/rss+xml" title="RSS フィード" href="/rss.xml" />
 </head>
 <body>
 {/* スライドプレビュー時（fullWidth=true）の場合はヘッダーを表示しない */}
@@ -64,7 +67,12 @@ const ogImageURL = new URL(image, Astro.site);
 {!fullWidth && (
 	<footer class="site-footer">
 		<div class="container">
-			<p>&copy; {new Date().getFullYear()} tubone24</p>
+			<p>
+				&copy; {new Date().getFullYear()} tubone24 
+				<span class="footer-links">
+					<a href="/rss.xml" class="rss-link">RSS</a>
+				</span>
+			</p>
 		</div>
 	</footer>
 )}
@@ -129,5 +137,23 @@ const ogImageURL = new URL(image, Astro.site);
 		color: white;
 		padding: 1rem 0;
 		text-align: center;
+	}
+	
+	.footer-links {
+		margin-left: 1rem;
+	}
+	
+	.rss-link {
+		color: #FFA500;
+		text-decoration: none;
+		font-size: 0.9rem;
+		padding: 0.2rem 0.5rem;
+		border-radius: 3px;
+		transition: background-color 0.2s ease;
+	}
+	
+	.rss-link:hover {
+		background-color: rgba(255, 165, 0, 0.2);
+		text-decoration: underline;
 	}
 </style>

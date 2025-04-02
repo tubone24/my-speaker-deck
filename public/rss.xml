@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>PDF Slideshow</title>
+    <link>https://example.com</link>
+    <description>PDF slides converted to images</description>
+    <language>ja</language>
+    <lastBuildDate>Tue, 25 Mar 2025 00:00:00 GMT</lastBuildDate>
+    <atom:link href="https://example.com/rss.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Langfuse V3を安くしたい</title>
+      <link>https://example.com/slides/langfusev3</link>
+      <guid isPermaLink="true">https://example.com/slides/langfusev3</guid>
+      <pubDate>Tue, 25 Mar 2025 00:00:00 GMT</pubDate>
+      <description>
+                &lt;div&gt;
+                    &lt;img src="https://example.com/images/slides/langfusev3/thumb.jpg" alt="Langfuse V3を安くしたい" /&gt;
+                    &lt;p&gt;Langfuse Night #2 - 初心者から熟練者まで - でおはなししたものです。&lt;/p&gt;
+                    &lt;p&gt;スライド枚数: 46枚&lt;/p&gt;
+                    &lt;p&gt;場所: &lt;a href="https://langfuse.connpass.com/event/345731/"&gt;Langfuse Night #2 - 初心者から熟練者まで -&lt;/a&gt;&lt;/p&gt;
+                &lt;/div&gt;
+            </description>
+    </item>
+    <item>
+      <title>Langfuse v3 使ってますか？</title>
+      <link>https://example.com/slides/langfuse-v3</link>
+      <guid isPermaLink="true">https://example.com/slides/langfuse-v3</guid>
+      <pubDate>Tue, 28 Jan 2025 00:00:00 GMT</pubDate>
+      <description>
+                &lt;div&gt;
+                    &lt;img src="https://example.com/images/slides/langfuse-v3/thumb.jpg" alt="Langfuse v3 使ってますか？" /&gt;
+                    &lt;p&gt;Langfuse Night #1で発表したLTです。&lt;/p&gt;
+                    &lt;p&gt;スライド枚数: 31枚&lt;/p&gt;
+                    &lt;p&gt;場所: &lt;a href="https://langfuse.connpass.com/event/340099/"&gt;Langfuse Night #1&lt;/a&gt;&lt;/p&gt;
+                &lt;/div&gt;
+            </description>
+    </item>
+    <item>
+      <title>【お子さま向け】Amazon ECS サービスディスカバリーって知ってる？【楽しい読み聞かせ】</title>
+      <link>https://example.com/slides/amazon-ecs</link>
+      <guid isPermaLink="true">https://example.com/slides/amazon-ecs</guid>
+      <pubDate>Wed, 08 Jan 2025 00:00:00 GMT</pubDate>
+      <description>
+                &lt;div&gt;
+                    &lt;img src="https://example.com/images/slides/amazon-ecs/thumb.jpg" alt="【お子さま向け】Amazon ECS サービスディスカバリーって知ってる？【楽しい読み聞かせ】" /&gt;
+                    &lt;p&gt;恐竜くんと楽しいAWSの冒険をしよう！&lt;/p&gt;
+                    &lt;p&gt;スライド枚数: 29枚&lt;/p&gt;
+                    &lt;p&gt;場所: &lt;a href="https://shimagaji.connpass.com/event/341023/"&gt;【2025/1/8】 #しむそくRadio 新春！冬休みの宿題LTスペシャル&lt;/a&gt;&lt;/p&gt;
+                &lt;/div&gt;
+            </description>
+    </item>
+    <item>
+      <title>Amazonの最新モデルを使ってみよう</title>
+      <link>https://example.com/slides/amazon</link>
+      <guid isPermaLink="true">https://example.com/slides/amazon</guid>
+      <pubDate>Thu, 19 Dec 2024 00:00:00 GMT</pubDate>
+      <description>
+                &lt;div&gt;
+                    &lt;img src="https://example.com/images/slides/amazon/thumb.jpg" alt="Amazonの最新モデルを使ってみよう" /&gt;
+                    &lt;p&gt;AWS re:Invent 2024 re:Cap presented by iret &amp; KAGOで登壇した資料です。&lt;/p&gt;
+                    &lt;p&gt;スライド枚数: 38枚&lt;/p&gt;
+                    &lt;p&gt;場所: &lt;a href="https://kddi-agile.connpass.com/event/338652/"&gt;AWS re:Invent 2024 re:Cap presented by iret &amp; KAG&lt;/a&gt;&lt;/p&gt;
+                &lt;/div&gt;
+            </description>
+    </item>
+    <item>
+      <title>Amazon CloudWatch Synthetics now supports Playwright runtime to create canaries with NodeJS の使い所を考える</title>
+      <link>https://example.com/slides/amazon-cloudwatch-synthetics-now-supports-playwright-runtime-to-create-canaries-with-nodejs</link>
+      <guid isPermaLink="true">https://example.com/slides/amazon-cloudwatch-synthetics-now-supports-playwright-runtime-to-create-canaries-with-nodejs</guid>
+      <pubDate>Tue, 26 Nov 2024 00:00:00 GMT</pubDate>
+      <description>
+                &lt;div&gt;
+                    &lt;img src="https://example.com/images/slides/amazon-cloudwatch-synthetics-now-supports-playwright-runtime-to-create-canaries-with-nodejs/thumb.jpg" alt="Amazon CloudWatch Synthetics now supports Playwright runtime to create canaries with NodeJS の使い所を考える" /&gt;
+                    &lt;p&gt;【DAY1】今年のAWSアプデ総ざらい！ #しむそくRadio Specialで登壇した資料 https://youtube.com/live/Az18xLh6UGI&lt;/p&gt;
+                    &lt;p&gt;スライド枚数: 37枚&lt;/p&gt;
+                    &lt;p&gt;場所: &lt;a href="https://kddi-agile.connpass.com/event/337806/"&gt;【DAY1】今年のAWSアプデ総ざらい！ #しむそくRadio Special&lt;/a&gt;&lt;/p&gt;
+                &lt;/div&gt;
+            </description>
+    </item>
+    <item>
+      <title>インフラとバックエンドとフロントエンドをくまなく調べて遅いアプリを早くした件</title>
+      <link>https://example.com/slides/slide-4a227d</link>
+      <guid isPermaLink="true">https://example.com/slides/slide-4a227d</guid>
+      <pubDate>Thu, 14 Nov 2024 00:00:00 GMT</pubDate>
+      <description>
+                &lt;div&gt;
+                    &lt;img src="https://example.com/images/slides/slide-4a227d/thumb.jpg" alt="インフラとバックエンドとフロントエンドをくまなく調べて遅いアプリを早くした件" /&gt;
+                    &lt;p&gt;NW-JAWS #13 ～re:Inventに行く前に振り返り～ で話したLTです。&lt;/p&gt;
+                    &lt;p&gt;スライド枚数: 49枚&lt;/p&gt;
+                    &lt;p&gt;場所: &lt;a href="https://jawsug-nw.connpass.com/event/333031/"&gt;NW-JAWS #13 ～re:Inventに行く前に振り返り～&lt;/a&gt;&lt;/p&gt;
+                &lt;/div&gt;
+            </description>
+    </item>
+    <item>
+      <title>Agentは楽しいぞ</title>
+      <link>https://example.com/slides/agent</link>
+      <guid isPermaLink="true">https://example.com/slides/agent</guid>
+      <pubDate>Tue, 18 Jun 2024 00:00:00 GMT</pubDate>
+      <description>
+                &lt;div&gt;
+                    &lt;img src="https://example.com/images/slides/agent/thumb.jpg" alt="Agentは楽しいぞ" /&gt;
+                    &lt;p&gt;Bedrock Claude Night 2（JAWS-UG AI/ML支部 × 東京支部コラボ）で喋ったやつ。&lt;/p&gt;
+                    &lt;p&gt;スライド枚数: 36枚&lt;/p&gt;
+                    &lt;p&gt;場所: &lt;a href="https://jawsug-ai.connpass.com/event/319748/"&gt;Bedrock Claude Night 2（JAWS-UG AI/ML支部 × 東京支部コラボ）&lt;/a&gt;&lt;/p&gt;
+                &lt;/div&gt;
+            </description>
+    </item>
+  </channel>
+</rss>

@@ -6,6 +6,7 @@ import { PDFDocument } from 'pdf-lib';
 import sharp from 'sharp';
 import os from 'os'; // CPUコア数取得用
 import crypto from 'crypto';
+import { create } from 'xmlbuilder2';
 
 // Types
 interface SlideInfo {
@@ -37,10 +38,16 @@ const rootDir = path.resolve(__dirname, '../..');
 const PDF_DIR = path.join(rootDir, 'public/pdfs');
 const IMAGE_DIR = path.join(rootDir, 'public/images/slides');
 const DATA_DIR = path.join(rootDir, 'src/data');
+const RSS_DIR = path.join(rootDir, 'public');
 const THUMB_SIZE: ThumbSize = { width: 300, height: 200 };
 const IMAGE_FORMAT = 'jpg';
 const IMAGE_QUALITY = 90;
 const DPI = 200;
+
+// RSS設定
+const SITE_TITLE = 'PDF Slideshow';
+const SITE_DESCRIPTION = 'PDF slides converted to images';
+const SITE_URL = 'https://example.com'; // 本番環境のURLに置き換えてください
 
 // 並列処理の最大数（CPUコア数に基づいて設定）
 const MAX_CONCURRENT_PDFS = Math.max(1, os.cpus().length - 1);
@@ -76,29 +83,42 @@ function ensureDir(dir: string): void {
 // 並列処理を制限する関数
 async function limitConcurrency<T>(tasks: (() => Promise<T>)[], maxConcurrency: number): Promise<T[]> {
     const results: T[] = [];
-    const running = new Set<Promise<void>>();
-
-    for (const task of tasks) {
-        if (running.size >= maxConcurrency) {
-            // 実行中のタスクが上限に達したら、いずれかが完了するまで待つ
-            await Promise.race([...running]);
+    
+    // タスクを同時実行数に制限して処理する
+    // インデックスで管理
+    let currentIndex = 0;
+    
+    const executeNextTask = async () => {
+        // 現在のインデックスを保存して、次のタスク用にインクリメント
+        const taskIndex = currentIndex++;
+        
+        // インデックスが範囲外ならnullを返す
+        if (taskIndex >= tasks.length) return null;
+        
+        // タスク実行
+        try {
+            const result = await tasks[taskIndex]();
+            results[taskIndex] = result; // 結果を元のタスク順に保存
+            return result;
+        } catch (error) {
+            console.error(`タスク${taskIndex}の実行中にエラーが発生しました:`, error);
+            throw error;
         }
-
-        // 新しいタスクを開始
-        const promise = (async () => {
-            try {
-                results.push(await task());
-            } finally {
-                running.delete(promise);
-            }
-        })();
-
-        running.add(promise);
-    }
-
-    // すべての実行中のタスクが完了するのを待つ
-    await Promise.all(running);
-
+    };
+    
+    // 同時実行数を考慮してプロミスの配列を作成
+    const workers = Array(Math.min(maxConcurrency, tasks.length))
+        .fill(null)
+        .map(async () => {
+            let result;
+            do {
+                result = await executeNextTask();
+            } while (result !== null);
+        });
+    
+    // すべてのワーカーの完了を待機
+    await Promise.all(workers);
+    
     return results;
 }
 
@@ -240,6 +260,57 @@ async function processPdf(pdfFile: string): Promise<SlideInfo> {
     };
 }
 
+// RSSフィードを生成する関数
+function generateRSSFeed(slides: SlideInfo[]): string {
+    // 最新の更新日を取得
+    const latestUpdate = slides.length > 0 
+        ? new Date(Math.max(...slides.map(slide => new Date(slide.date).getTime())))
+        : new Date();
+    
+    // スライドを日付順にソート（新しい順）
+    const sortedSlides = [...slides].sort((a, b) => 
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+    
+    // RSS2.0フィードを作成
+    const feed = create({ version: '1.0' })
+        .ele('rss', { version: '2.0', 'xmlns:atom': 'http://www.w3.org/2005/Atom' })
+            .ele('channel')
+                .ele('title').txt(SITE_TITLE).up()
+                .ele('link').txt(SITE_URL).up()
+                .ele('description').txt(SITE_DESCRIPTION).up()
+                .ele('language').txt('ja').up()
+                .ele('lastBuildDate').txt(latestUpdate.toUTCString()).up()
+                .ele('atom:link', {
+                    href: `${SITE_URL}/rss.xml`,
+                    rel: 'self',
+                    type: 'application/rss+xml'
+                }).up();
+    
+    // 各スライドをアイテムとして追加
+    sortedSlides.forEach(slide => {
+        const itemDate = new Date(slide.date);
+        const itemLink = `${SITE_URL}/slides/${slide.id}`;
+        const thumbnailUrl = `${SITE_URL}${slide.thumbnail}`;
+        
+        feed.ele('item')
+            .ele('title').txt(slide.title).up()
+            .ele('link').txt(itemLink).up()
+            .ele('guid', { isPermaLink: 'true' }).txt(itemLink).up()
+            .ele('pubDate').txt(itemDate.toUTCString()).up()
+            .ele('description').txt(`
+                <div>
+                    <img src="${thumbnailUrl}" alt="${slide.title}" />
+                    <p>${slide.description || ''}</p>
+                    <p>スライド枚数: ${slide.pageCount}枚</p>
+                    ${slide.location ? `<p>場所: <a href="${slide.location.url}">${slide.location.text}</a></p>` : ''}
+                </div>
+            `).up();
+    });
+    
+    return feed.end({ prettyPrint: true });
+}
+
 // メイン処理
 async function main(): Promise<void> {
     console.log(`並列処理を開始します（最大${MAX_CONCURRENT_PDFS}つのPDFを同時処理）`);
@@ -273,6 +344,12 @@ async function main(): Promise<void> {
 
     // スライド情報をJSONファイルに書き出し
     fs.writeFileSync(path.join(DATA_DIR, 'slides.json'), JSON.stringify(slidesData, null, 2));
+    
+    // RSSフィードを生成して保存
+    console.log('RSSフィードを生成しています...');
+    const rssXml = generateRSSFeed(slidesData);
+    fs.writeFileSync(path.join(RSS_DIR, 'rss.xml'), rssXml);
+    console.log('RSSフィードを保存しました: /public/rss.xml');
 
     // 処理時間を計算
     const elapsedTime = (Date.now() - startTime) / 1000;
