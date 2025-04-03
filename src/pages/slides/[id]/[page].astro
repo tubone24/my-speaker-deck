@@ -207,6 +207,16 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
         </div>
         
         <div class="embed-code-wrapper" aria-hidden="true">
+            <div class="embed-code-header">
+                <h3>埋め込みコード</h3>
+                <button id="close-embed" class="close-button" aria-label="閉じる">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                    <span class="close-text">閉じる</span>
+                </button>
+            </div>
             <EmbedCode slideId={slide.id} pageNum={currentPage} baseUrl={Astro.site || 'https://slide-tubone24.pages.dev'} />
         </div>
     </div>
@@ -267,6 +277,7 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
         // 埋め込みコード表示切替
         const embedToggle = document.getElementById('embed-toggle');
         const embedCodeWrapper = document.querySelector('.embed-code-wrapper');
+        const closeEmbedButton = document.getElementById('close-embed');
         
         if (embedToggle && embedCodeWrapper) {
             embedToggle.addEventListener('click', () => {
@@ -283,6 +294,17 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
                 
                 const isExpanded = embedCodeWrapper.classList.contains('open');
                 embedCodeWrapper.setAttribute('aria-hidden', !isExpanded);
+            });
+        }
+        
+        // 埋め込みコードを閉じるボタン
+        if (closeEmbedButton && embedCodeWrapper) {
+            closeEmbedButton.addEventListener('click', () => {
+                embedCodeWrapper.classList.remove('open');
+                if (embedToggle) {
+                    embedToggle.classList.remove('open');
+                }
+                embedCodeWrapper.setAttribute('aria-hidden', 'true');
             });
         }
 
@@ -530,6 +552,43 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
 .embed-code-wrapper.open {
     max-height: 600px;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.embed-code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.embed-code-header h3 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+.close-button {
+    background-color: #e74c3c;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    gap: 0.5rem;
+}
+
+.close-button:hover {
+    background-color: #c0392b;
+}
+
+.close-text {
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
 /* モバイル対応 */
