@@ -1,0 +1,20 @@
+---
+export async function getStaticPaths() {
+    // スライドデータを読み込み
+    let slides = [];
+    try {
+        slides = await import('../../../data/slides.json').then(module => module.default);
+    } catch (e) {
+        console.warn('スライドデータの読み込みに失敗しました:', e);
+        slides = [{ id: 'sample-presentation' }];
+    }
+
+    return slides.map(slide => ({
+        params: { id: encodeURIComponent(slide.id) }
+    }));
+}
+
+// リダイレクト：/embed/[id] -> /embed/[id]/1
+const siteUrl = Astro.site?.toString() || 'https://slide-tubone24.pages.dev';
+return Astro.redirect(`${siteUrl}/embed/${Astro.params.id}/1`);
+---

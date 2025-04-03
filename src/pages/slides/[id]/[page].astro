@@ -3,6 +3,7 @@ import Layout from '../../../layouts/Layout.astro';
 import SlideViewer from '../../../components/SlideViewer.astro';
 import Thumbnails from '../../../components/Thumbnails.astro';
 import SocialShare from '../../../components/SocialShare.astro';
+import EmbedCode from '../../../components/EmbedCode.astro';
 
 // getStaticPaths関数を追加（ビルド時に生成するパスを定義）
 export async function getStaticPaths() {
@@ -189,6 +190,14 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
                         </svg>
                         PDF
                     </a>
+                    
+                    <button id="embed-toggle" class="embed-toggle-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-small">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        埋め込み
+                    </button>
                 </div>
             </div>
         </div>
@@ -196,10 +205,14 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
         <div class="thumbnails-wrapper" aria-hidden="true">
             <Thumbnails images={slideImages} count={slide.pageCount} currentPage={currentPage} />
         </div>
+        
+        <div class="embed-code-wrapper" aria-hidden="true">
+            <EmbedCode slideId={slide.id} pageNum={currentPage} baseUrl={Astro.site || 'https://slide-tubone24.pages.dev'} />
+        </div>
     </div>
 </Layout>
 
-<script define:vars={{ currentPage, slide, slideImages }}>
+<script define:vars={{ currentPage, slide, slideImages, siteUrl: Astro.site?.toString() || 'https://slide-tubone24.pages.dev' }}>
     // 現在のページ番号とスライド情報をJSに渡す
     let pageNum = parseInt(currentPage);
     const totalPages = slide.pageCount;
@@ -236,6 +249,13 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
             thumbnailsWrapper.classList.toggle('open');
             thumbnailsToggle.classList.toggle('open');
 
+            // 埋め込みコードが開いていたら閉じる
+            if (embedCodeWrapper.classList.contains('open')) {
+                embedCodeWrapper.classList.remove('open');
+                embedToggle.classList.remove('open');
+                embedCodeWrapper.setAttribute('aria-hidden', 'true');
+            }
+
             const isExpanded = thumbnailsWrapper.classList.contains('open');
             thumbnailsToggle.setAttribute('aria-expanded', isExpanded);
             thumbnailsWrapper.setAttribute('aria-hidden', !isExpanded);
@@ -243,6 +263,28 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
             // 現在の状態を更新
             updateHistory(pageNum, isExpanded);
         });
+        
+        // 埋め込みコード表示切替
+        const embedToggle = document.getElementById('embed-toggle');
+        const embedCodeWrapper = document.querySelector('.embed-code-wrapper');
+        
+        if (embedToggle && embedCodeWrapper) {
+            embedToggle.addEventListener('click', () => {
+                embedCodeWrapper.classList.toggle('open');
+                embedToggle.classList.toggle('open');
+                
+                // サムネイルが開いていたら閉じる
+                if (thumbnailsWrapper.classList.contains('open')) {
+                    thumbnailsWrapper.classList.remove('open');
+                    thumbnailsToggle.classList.remove('open');
+                    thumbnailsToggle.setAttribute('aria-expanded', 'false');
+                    thumbnailsWrapper.setAttribute('aria-hidden', 'true');
+                }
+                
+                const isExpanded = embedCodeWrapper.classList.contains('open');
+                embedCodeWrapper.setAttribute('aria-hidden', !isExpanded);
+            });
+        }
 
         // 進捗バーの更新関数
         function updateProgressBar(pageNum) {
@@ -449,6 +491,56 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
 </script>
 
 <style>
+/* 埋め込みコード関連のスタイル */
+.embed-toggle-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.6rem;
+    background-color: rgba(52, 152, 219, 0.2);
+    border: none;
+    border-radius: 4px;
+    color: #3498db;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-left: 0.5rem;
+}
+
+.embed-toggle-button:hover {
+    background-color: rgba(52, 152, 219, 0.3);
+}
+
+.embed-toggle-button.open {
+    background-color: rgba(52, 152, 219, 0.4);
+}
+
+.embed-code-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+    background-color: white;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+}
+
+.embed-code-wrapper.open {
+    max-height: 600px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+    .embed-toggle-button {
+        margin-top: 0.5rem;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 .slide-viewer-container {
     display: flex;
     flex-direction: column;

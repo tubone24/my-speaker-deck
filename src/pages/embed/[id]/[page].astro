@@ -1,0 +1,308 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import SlideViewer from '../../../components/SlideViewer.astro';
+
+// getStaticPaths関数を追加（ビルド時に生成するパスを定義）
+export async function getStaticPaths() {
+    // スライドデータを読み込み
+    let slides = [];
+    try {
+        slides = await import('../../../data/slides.json').then(module => module.default);
+    } catch (e) {
+        console.warn('スライドデータの読み込みに失敗しました:', e);
+        // エラーが発生した場合、少なくとも1つのパスを返す
+        return [
+            {
+                params: { id: 'sample-presentation', page: '1' },
+                props: {
+                    slide: {
+                        id: 'sample-presentation',
+                        title: 'サンプルプレゼンテーション',
+                        description: 'サンプルの説明文です。',
+                        pageCount: 5,
+                        date: new Date().toISOString(),
+                        location: {
+                            text: 'サンプルイベント',
+                            url: 'https://example.com/event'
+                        },
+                        thumbnail: '/images/placeholder.jpg',
+                        pdfPath: '/pdfs/sample.pdf'
+                    },
+                    pageNum: 1
+                }
+            }
+        ];
+    }
+
+    // 各スライドの各ページに対応するパスを生成
+    const paths = [];
+
+    slides.forEach(slide => {
+        // 各ページのパスを生成
+        for (let i = 1; i <= slide.pageCount; i++) {
+            paths.push({
+                params: { id: slide.id, page: i.toString() },
+                props: {
+                    slide,
+                    pageNum: i
+                }
+            });
+        }
+    });
+
+    return paths;
+}
+
+// propsからスライドデータとページ番号を取得
+const { slide, pageNum } = Astro.props;
+
+// 現在のページ番号（数値型）
+const currentPage = parseInt(pageNum);
+
+// 画像パスの生成
+const currentImage = `${import.meta.env.BASE_URL}images/slides/${slide.id}/${currentPage}.jpg`;
+const slideImages = [];
+for (let i = 1; i <= slide.pageCount; i++) {
+    slideImages.push(`${import.meta.env.BASE_URL}images/slides/${slide.id}/${i}.jpg`);
+}
+
+// OGP用の画像URL
+const ogImageUrl = currentImage;
+
+// ページタイトル
+const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`;
+---
+
+<Layout
+        title={pageTitle}
+        description={slide.description || `${slide.title}（${currentPage}/${slide.pageCount}ページ）`}
+        image={ogImageUrl}
+        fullWidth={true}
+>
+    <div class="embed-viewer-container">
+        <SlideViewer images={slideImages} title={slide.title} initialPage={currentPage} />
+
+        <div class="progress-bar-container">
+            <div class="progress-bar" style={`width: ${(currentPage / slide.pageCount) * 100}%`}></div>
+            <div class="progress-counter">{currentPage} / {slide.pageCount}</div>
+        </div>
+
+        <div class="embed-controls">
+            <a href={currentPage > 1 ? `${import.meta.env.BASE_URL}/embed/${slide.id}/${currentPage - 1}` : '#'}
+               class="btn btn-icon"
+               aria-disabled={currentPage <= 1}
+               aria-label="前のスライド"
+               id="prev-slide">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                    <path d="m15 18-6-6 6-6"/>
+                </svg>
+            </a>
+
+            <a href={currentPage < slide.pageCount ? `${import.meta.env.BASE_URL}/embed/${slide.id}/${currentPage + 1}` : '#'}
+               class="btn btn-icon"
+               aria-disabled={currentPage >= slide.pageCount}
+               aria-label="次のスライド"
+               id="next-slide">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</Layout>
+
+<script define:vars={{ currentPage, slide, slideImages }}>
+    // 現在のページ番号とスライド情報をJSに渡す
+    let pageNum = parseInt(currentPage);
+    const totalPages = slide.pageCount;
+
+    // スライドショーのインタラクティブ機能
+    document.addEventListener('DOMContentLoaded', () => {
+        // 必要な要素の取得
+        const slideImages = document.querySelectorAll('.slide-image');
+        const prevButton = document.getElementById('prev-slide');
+        const nextButton = document.getElementById('next-slide');
+
+        // 進捗バーの更新関数
+        function updateProgressBar(pageNum) {
+            const progressBar = document.querySelector('.progress-bar');
+            const progressCounter = document.querySelector('.progress-counter');
+            if (progressBar) {
+                progressBar.style.width = `${(pageNum / totalPages) * 100}%`;
+            }
+            if (progressCounter) {
+                progressCounter.textContent = `${pageNum} / ${totalPages}`;
+            }
+        }
+
+        // スライド表示を更新する関数
+        function updateSlideDisplay(newPageNum) {
+            // 現在のスライドを非表示
+            slideImages[pageNum - 1].style.display = 'none';
+
+            // 新しいスライドを表示
+            pageNum = newPageNum;
+            slideImages[pageNum - 1].style.display = 'flex';
+
+            // ナビゲーションボタンの状態を更新
+            prevButton.setAttribute('aria-disabled', pageNum <= 1);
+            nextButton.setAttribute('aria-disabled', pageNum >= totalPages);
+
+            // 進捗バーの更新
+            updateProgressBar(pageNum);
+        }
+
+        // スライドを前に移動
+        function goToPreviousSlide(e) {
+            if (e) e.preventDefault();
+            if (pageNum > 1) {
+                const newPageNum = pageNum - 1;
+
+                // URLを更新（履歴に追加）
+                const url = `/embed/${slide.id}/${newPageNum}`;
+                history.pushState({}, '', url);
+
+                // UI更新
+                updateSlideDisplay(newPageNum);
+            }
+        }
+
+        // スライドを次に移動
+        function goToNextSlide(e) {
+            if (e) e.preventDefault();
+            if (pageNum < totalPages) {
+                const newPageNum = pageNum + 1;
+
+                // URLを更新（履歴に追加）
+                const url = `/embed/${slide.id}/${newPageNum}`;
+                history.pushState({}, '', url);
+
+                // UI更新
+                updateSlideDisplay(newPageNum);
+            }
+        }
+
+        // ブラウザの戻る・進むボタン対応
+        window.addEventListener('popstate', () => {
+            const pathParts = window.location.pathname.split('/');
+            const newPageNum = parseInt(pathParts[pathParts.length - 1]) || 1;
+            
+            // スライド表示を更新
+            updateSlideDisplay(newPageNum);
+        });
+
+        // ナビゲーションボタンのイベント
+        prevButton.addEventListener('click', goToPreviousSlide);
+        nextButton.addEventListener('click', goToNextSlide);
+
+        // キーボードショートカット
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                goToPreviousSlide();
+            } else if (e.key === 'ArrowRight') {
+                goToNextSlide();
+            }
+        });
+
+        // 親ウィンドウにサイズを通知
+        function notifyParentSize() {
+            const height = document.body.scrollHeight;
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ type: 'resize', height }, '*');
+            }
+        }
+
+        // 初期化時とリサイズ時にサイズを通知
+        window.addEventListener('load', notifyParentSize);
+        window.addEventListener('resize', notifyParentSize);
+    });
+</script>
+
+<style>
+.embed-viewer-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #1a1a1a;
+    color: white;
+    }
+
+.progress-bar-container {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    position: relative;
+    }
+
+.progress-bar {
+    height: 100%;
+    background-color: #3498db;
+    transition: width 0.3s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    }
+
+/* 進捗カウンターのスタイル */
+.progress-counter {
+    position: absolute;
+    right: 10px;
+    top: -22px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    }
+
+.embed-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    z-index: 100;
+    }
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+    }
+
+.btn[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    }
+
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(52, 152, 219, 0.7);
+    color: white;
+    transition: all 0.2s ease;
+    }
+
+.btn-icon:hover:not([aria-disabled="true"]) {
+    background-color: rgba(52, 152, 219, 0.9);
+    transform: translateY(-2px);
+    }
+
+.icon {
+    width: 24px;
+    height: 24px;
+    }
+</style>
