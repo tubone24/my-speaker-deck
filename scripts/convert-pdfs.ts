@@ -47,7 +47,7 @@ const DPI = 200;
 // RSS設定
 const SITE_TITLE = 'PDF Slideshow';
 const SITE_DESCRIPTION = 'PDF slides converted to images';
-const SITE_URL = 'https://example.com'; // 本番環境のURLに置き換えてください
+const SITE_URL = 'https://slide-tubone24.pages.dev';
 
 // 並列処理の最大数（CPUコア数に基づいて設定）
 const MAX_CONCURRENT_PDFS = Math.max(1, os.cpus().length - 1);
