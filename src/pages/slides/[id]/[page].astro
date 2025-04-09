@@ -483,6 +483,30 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
             }
         });
 
+        const slideImagesElem = document.querySelectorAll('.slide-image');
+        slideImagesElem.forEach(image => {
+            image.addEventListener('click', (e) => {
+                // クリックした位置を取得
+                const imageRect = image.getBoundingClientRect();
+                const clickX = e.clientX - imageRect.left;
+                const halfWidth = imageRect.width / 2;
+
+                // 左半分をクリックした場合は前のスライドへ
+                if (clickX < halfWidth) {
+                    if (pageNum > 1) {
+                        goToPreviousSlide(e);
+                    }
+                }
+                // 右半分をクリックした場合は次のスライドへ
+                else {
+                    if (pageNum < totalPages) {
+                        goToNextSlide(e);
+                    }
+                }
+            });
+        });
+
+
         // ナビゲーションボタンのイベント
         prevButton.addEventListener('click', goToPreviousSlide);
         nextButton.addEventListener('click', goToNextSlide);
