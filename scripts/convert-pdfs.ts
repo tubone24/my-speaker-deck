@@ -7,6 +7,7 @@ import sharp from 'sharp';
 import os from 'os'; // CPUコア数取得用
 import crypto from 'crypto';
 import { create } from 'xmlbuilder2';
+import { pdfToPages } from 'pdf-ts';
 
 // Types
 interface SlideInfo {
@@ -23,6 +24,7 @@ interface SlideInfo {
     thumbnail: string;
     pdfPath: string;
     thumbnails: string[];
+    pageTexts: string[];  // 各ページのテキスト内容
 }
 
 interface ThumbSize {
@@ -171,6 +173,24 @@ async function createThumbnail(inputPath: string, outputPath: string): Promise<v
         .toFile(outputPath);
 }
 
+// PDFからテキストを抽出する関数
+async function extractTextFromPdf(pdfPath: string): Promise<string[]> {
+    console.log(`Extracting text from ${pdfPath}...`);
+    
+    try {
+        const pdfData = fs.readFileSync(pdfPath);
+        const pages = await pdfToPages(pdfData);
+        
+        // 各ページのテキストを抽出
+        const pageTexts = pages.map(page => page.text);
+        
+        return pageTexts;
+    } catch (error) {
+        console.error(`テキスト抽出中にエラーが発生しました: ${error}`);
+        return [];
+    }
+}
+
 // 単一のPDFを処理する関数
 async function processPdf(pdfFile: string): Promise<SlideInfo> {
     const filename = path.basename(pdfFile);
@@ -188,6 +208,12 @@ async function processPdf(pdfFile: string): Promise<SlideInfo> {
     const pdfBytes = fs.readFileSync(pdfFile);
     const pdfDoc = await PDFDocument.load(pdfBytes);
     const pageCount = pdfDoc.getPageCount();
+    
+    // PDFからテキストを抽出
+    const pageTexts = await extractTextFromPdf(pdfFile);
+    
+    // テキストをJSONファイルとして保存（デバッグ用）
+    fs.writeFileSync(path.join(slideDir, 'text-content.json'), JSON.stringify(pageTexts, null, 2));
 
     // PDFを画像に変換
     await convertPdfToImages(pdfFile, slideDir, slideId);
@@ -256,7 +282,8 @@ async function processPdf(pdfFile: string): Promise<SlideInfo> {
         thumbnail: `/images/slides/${slideId}/thumb.jpg`,
         pageCount: pageCount,
         pdfPath: `/pdfs/${filename}`,
-        thumbnails: thumbnails
+        thumbnails: thumbnails,
+        pageTexts: pageTexts
     };
 }
 
@@ -293,6 +320,11 @@ function generateRSSFeed(slides: SlideInfo[]): string {
         const itemLink = `${SITE_URL}/slides/${slide.id}`;
         const thumbnailUrl = `${SITE_URL}${slide.thumbnail}`;
         
+        // スライドの最初のページのテキストを抽出（SEO向上のため）
+        const firstPageText = slide.pageTexts && slide.pageTexts.length > 0 
+            ? slide.pageTexts[0].substring(0, 300) + '...' 
+            : '';
+        
         feed.ele('item')
             .ele('title').txt(slide.title).up()
             .ele('link').txt(itemLink).up()
@@ -302,6 +334,7 @@ function generateRSSFeed(slides: SlideInfo[]): string {
                 <div>
                     <img src="${thumbnailUrl}" alt="${slide.title}" />
                     <p>${slide.description || ''}</p>
+                    <p>${firstPageText}</p>
                     <p>スライド枚数: ${slide.pageCount}枚</p>
                     ${slide.location ? `<p>場所: <a href="${slide.location.url}">${slide.location.text}</a></p>` : ''}
                 </div>

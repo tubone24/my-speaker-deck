@@ -89,6 +89,13 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
         image={ogImageUrl}
         fullWidth={true}
 >
+    <!-- SEO用のテキストコンテンツ（視覚的には非表示） -->
+    {slide.pageTexts && slide.pageTexts[currentPage - 1] && (
+        <div class="seo-text-content">
+            <h2>スライドテキスト内容</h2>
+            <p>{slide.pageTexts[currentPage - 1]}</p>
+        </div>
+    )}
     <div class="slide-viewer-container">
         <header class="slide-header">
             <div class="container">
@@ -537,6 +544,19 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
 </script>
 
 <style>
+/* SEO用テキストコンテンツのスタイル（視覚的に非表示） */
+.seo-text-content {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 /* 埋め込みコード関連のスタイル */
 .embed-toggle-button {
     display: inline-flex;

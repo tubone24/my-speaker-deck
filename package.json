@@ -13,6 +13,7 @@
   "dependencies": {
     "astro": "^5.5.5",
     "pdf-lib": "^1.17.1",
+    "pdf-ts": "^0.0.2",
     "sharp": "^0.33.5",
     "xmlbuilder2": "^3.1.1"
   },
