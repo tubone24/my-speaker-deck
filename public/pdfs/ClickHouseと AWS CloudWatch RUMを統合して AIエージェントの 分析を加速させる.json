@@ -1,0 +1,9 @@
+{
+    "title": "ClickHouseと AWS CloudWatch RUMを統合して AIエージェントの 分析を加速させる",
+  "description": "ClickHouse (クリックハウス) Tokyo Meetup - AIナイト！で登壇した資料です。",
+  "date": "2025-06-05",
+  "location": {
+    "text": "ClickHouse (クリックハウス) Tokyo Meetup - AIナイト！",
+    "url": "https://www.meetup.com/ja-JP/clickhouse-tokyo-user-group/events/307689645/"
+  }
+}
