@@ -9,12 +9,12 @@
     <atom:link href="https://slide-tubone24.pages.dev/rss.xml" rel="self" type="application/rss+xml"/>
     <item>
       <title>MCPにおける認証・認可</title>
-      <link>https://slide-tubone24.pages.dev/slides/mcp</link>
-      <guid isPermaLink="true">https://slide-tubone24.pages.dev/slides/mcp</guid>
+      <link>https://slide-tubone24.pages.dev/slides/authmcp</link>
+      <guid isPermaLink="true">https://slide-tubone24.pages.dev/slides/authmcp</guid>
       <pubDate>Fri, 13 Jun 2025 00:00:00 GMT</pubDate>
       <description>
                 &lt;div&gt;
-                    &lt;img src="https://slide-tubone24.pages.dev/images/slides/mcp/thumb.jpg" alt="MCPにおける認証・認可" /&gt;
+                    &lt;img src="https://slide-tubone24.pages.dev/images/slides/authmcp/thumb.jpg" alt="MCPにおける認証・認可" /&gt;
                     &lt;p&gt;MCPにおける認証・認可&lt;/p&gt;
                     &lt;p&gt;MCP
 における認証・認可
