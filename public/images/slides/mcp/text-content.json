@@ -1,0 +1,20 @@
+[
+  "MCP\n勉強会\n–\n技術深堀り\n-\n2025.5.26",
+  "1\nKDDI Agile Development Center Corporation \n自己紹介",
+  "社外秘\nX\n2\nKDDI Agile Development Center Corporation \nプリミティブ",
+  "3\nKDDI Agile Development Center Corporation \nMCP\nはツールが主要機能ですが、他にも機能があります\nMCP\nの主要機能（プリミティブ）\nhttps://modelcontextprotocol.io/clients\n•\nリソース\n•\nプロンプト\n•\nツール\n（とはいえ、ほとんどツール利用用途で\nMCP\nを使っている）\n（規格はあるけど実装は進んでいないもの）\n•\nサンプリング\n•\nルート",
+  "4\nKDDI Agile Development Center Corporation \nリソースは\nLLM\nの知識拡張に使う読み取り専用オブジェクト\nMCP\nの主要機能（プリミティブ）\nよく\nMCP\nで表現される図はリソースを\n指していそうな図\n（厳密にはリソースだけじゃないですが\n...\n）\nこれが、\nMCP = RAG\nと言われてしまう所以\n次のような\nURI\nで表現される\nnote://\nhogehoge\n/\ntext.md\nSchema\nContents\nhttps://modelcontextprotocol.io/introduction#general\n-\narchitecture",
+  "5\nKDDI Agile Development Center Corporation \nプロンプトは用意されたプロンプトテンプレートを提供\nMCP\nの主要機能（プリミティブ）\nプロンプトに埋める内容を入力\n完成版の\n”\nプロンプト\n”\nが完成\n利用するプロンプトを指定する\n【\nユースケース\n】\nプロンプトエンジニアリング難しいユーザーへの補助として。\nアプリ\n: AWS\nブログレベル判定くんとか︖",
+  "6\nKDDI Agile Development Center Corporation \nサンプリング・ルートは現時点サポートされている\nMCP\nホストが皆無\n今後のサポートに期待しましょう︕\nMCP\nの主要機能（プリミティブ）\nサンプリング\nルート\nMCP\nサーバー上で\nLLM\nによる推論\n(Sampling)\nを実施\nできる\nMCP\nホスト上の\nアクセス可能な領域を指示\n（タグ付けもする）",
+  "7\nKDDI Agile Development Center Corporation \nおまけ\nツールのシーケンス\ntools/list\nという利用できるツールの一覧を\nMCP\nサーバーが返すことで、\n実際の質問の際に適当なツール呼び出し（そのパラメータ含め）ができる\nMCP\nホストによってタイミングは異なるが、\n事前にどのツールが使えるか\nLLM\nに渡している",
+  "社外秘\nX\n8\nKDDI Agile Development Center Corporation \n通信方式",
+  "9\nKDDI Agile Development Center Corporation \nローカルで\nMCP\nホストとサーバーと通信する方法が有名ですが、\nリモートのサーバーと通信する方法もあります\n通信方式\nPC\nMCP\nホスト\n(Claude Desktop\nとか\n)\nMCP\nクライアント\nMCP\nクライアント\nMCP\nサーバー（ローカル）\nMCP\nサーバー（リモート）\nSTDIO\nHTTP + SSE\nStreamable\nHTTP\nローカルの場合、標準入出力を使った通信。\nリモートの場合、\nHTTP + SSE(Server Sent Event)\nが\n用意されてましたが、新方式として\nStreamable\nHTTP\nへの\n置き換えが進んでいます。\n【\nTIPS\n】\nSSE\nは\nLLM\nのストリーミングを\n実現する技術です\nStreamable\nHTTP\nは、\nHTTP\nベースで動きつつ、必要に応じ\nて\nSSE\nも使う、というものです",
+  "10\nKDDI Agile Development Center Corporation \nローカル\nMCP\nサーバーは\nLanguage Server Protocol\nを\n想像してもらうとイメージつくかもです。\nおまけ（\nLSP\n）\nようは、様々なエディターで使える共通の補完機能\nサーバーとはいいつつ、実体は、エディターと通信可能な\nローカルプロセス。\nローカル\nMCP\nサーバーもまさにこの仕組みに似ている。",
+  "11\nKDDI Agile Development Center Corporation \nSSE\nの場合は\nResponse\nが\n”\ntext/event\n-\nstream”\nとなる\nStreamable\nHTTP\nは基本が\nHTTP\nで場合によっては\nSSE\nも使える\nおまけ（\nSSE\nの話）\nSSE\nの課題\n-\n復帰がしにくい。（これは\nAI\nエージェントでも同じ）\n-\nリソース効率が悪い",
+  "12\nKDDI Agile Development Center Corporation \nリモート\nMCP\nサーバーの場合、認証認可の仕組みが必要になります。\n最近、\nOAuth2.1\nを使う規格が定まってきました。\n通信方式\n【\nかいつまんでポイント\n】\n-\nユーザー認証・同意を求める画面が出てきます\n-\nGoogle\nとかの\nOauth\nを想像いただければ\n-\ncode\nからアクセストークンを発行します\n-\n場合によってはリフレッシュトークンの発行も\n必要です\n-\nこれとは別に、\nMCP\nサーバー接続先のサービス\nの認証認可も取る必要があり、トークンのマッ\nピングが必要になります\nhttps://auth0.com/blog/an\n-\nintroduction\n-\nto\n-\nmcp\n-\nand\n-\nauthorization/\n組み込みセキュリティベースライン\n(PKCE)",
+  "社外秘\nX\n13\nKDDI Agile Development Center Corporation \nMCP\nサーバーを作るには︖",
+  "14\nKDDI Agile Development Center Corporation \nPython\n・\nNode\nであれば\nFastMCP\nが便利ですが、公式から出ている\nSDK\nも使えます\nMCP\nサーバーを作るには︖\nなんの価値もないですが、\nテキ\nストをこだまする\nMCP\nサーバーならたった\n数\n行で実装できます。\n公\n式の\nS\nDK\nで\n作\nったサンプル\n↓\nhttps://\ngithub.com\n/tubone\n24\n/midi\n-\nmcp\n-\nserver",
+  "社外秘\nX\n15\nKDDI Agile Development Center Corporation \nもっと詳しく勉強したい場合",
+  "16\nKDDI Agile Development Center Corporation \nもっと詳しく勉強したい場合\n•\nま\nず\nは\n公\n式\nD\noc\nを\n読\nみ\n込む\nことを\nお\nすすめします\n︕\n◦\nhttps://modelcontextprotocol.io/introduction\n•\n自分\nで\n作\nってみることも\n習得\nに\n繋\nがります。\n◦\nMCP\nはあくまでも規格なので、利用しないような機能も\n多\nく定\n義\nされて\nお\nり、実装のほうがシンプルな\nパ\nターン\nが\n多\nいです\n◦\nローカル実装が\nハ\nー\nド\nルが\n低\nいです\n•\nインス\nペ\nクターを使ってみる\n◦\n実装した\nMCP\nサーバーの\nI\nN\n/OUT\nを\n見\nることができるので、\n理解\nが進みます。\n◦\nnpx\n@\nmodelcontextprotocol\n/inspector node build/\nindex.\nj\ns\narg\n1\n arg\n2\n•\nschema.\nj\nson\nを\n眺\nめる\n◦\nhttps://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/schema/\n2025\n-\n03\n-\n26\n/schema.\nj\nson\n◦\n一\n応\nMCP\nで定められている通信規格が\n全量\n定\n義\nされている",
+  "Be a Change Leader.\nアジャイルに力を与え\n共に成⻑し続ける社会を創る"
+]
