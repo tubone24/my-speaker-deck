@@ -8,18 +8,37 @@
     "preview": "astro preview",
     "astro": "astro",
     "build:scripts": "tsc -p tsconfig.scripts.json",
-    "convert": "npm run build:scripts && node dist/scripts/convert-pdfs.js"
+    "convert": "npm run build:scripts && node dist/scripts/convert-pdfs.js",
+    "lint": "eslint . --ext .js,.ts,.astro",
+    "lint:fix": "eslint . --ext .js,.ts,.astro --fix",
+    "format": "prettier --write \"**/*.{js,ts,astro,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,ts,astro,json,md}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "astro": "^5.5.5",
+    "astro": "^5.15.8",
     "pdf-lib": "^1.17.1",
-    "pdf-ts": "^0.0.2",
-    "sharp": "^0.33.5",
-    "xmlbuilder2": "^3.1.1"
+    "pdf-parse": "^2.4.5",
+    "sharp": "^0.34.5",
+    "xmlbuilder2": "^4.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@testing-library/dom": "^10.4.1",
     "@types/node": "^20.4.5",
+    "@typescript-eslint/eslint-plugin": "^8.46.4",
+    "@typescript-eslint/parser": "^8.46.4",
+    "@vitest/ui": "^4.0.9",
+    "eslint": "^9.39.1",
+    "eslint-plugin-astro": "^1.5.0",
+    "happy-dom": "^20.0.10",
+    "prettier": "^3.6.2",
+    "prettier-plugin-astro": "^0.14.1",
     "ts-node": "^10.9.1",
-    "typescript": "^5.1.6"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.9"
   }
 }

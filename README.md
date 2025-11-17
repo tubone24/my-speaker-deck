@@ -32,13 +32,45 @@ This project is built with Astro, a modern static site generator that delivers l
 
 ### Development Commands
 
-| Command | Action |
-|---------|--------|
-| `npm install` | Installs dependencies |
-| `npm run dev` | Starts local dev server at `localhost:4321` |
-| `npm run build` | Build production site to `./dist/` |
-| `npm run preview` | Preview build locally before deploying |
-| `npm run astro ...` | Run CLI commands like `astro add`, `astro check` |
+| Command                 | Action                                           |
+| ----------------------- | ------------------------------------------------ |
+| `npm install`           | Installs dependencies                            |
+| `npm run dev`           | Starts local dev server at `localhost:4321`      |
+| `npm run build`         | Build production site to `./dist/`               |
+| `npm run preview`       | Preview build locally before deploying           |
+| `npm run astro ...`     | Run CLI commands like `astro add`, `astro check` |
+| `npm run lint`          | Run ESLint to check code quality                 |
+| `npm run lint:fix`      | Run ESLint and automatically fix issues          |
+| `npm run format`        | Format code with Prettier                        |
+| `npm run format:check`  | Check code formatting                            |
+| `npm test`              | Run unit tests with Vitest                       |
+| `npm run test:watch`    | Run tests in watch mode                          |
+| `npm run test:ui`       | Run tests with UI                                |
+| `npm run test:coverage` | Run tests with coverage report                   |
+
+### Quality Assurance
+
+This project includes comprehensive testing and code quality tools:
+
+- **ESLint**: For code quality and consistency
+- **Prettier**: For code formatting
+- **Vitest**: For unit testing
+- **TypeScript**: For type safety
+
+### Continuous Integration
+
+This repository uses GitHub Actions for CI/CD:
+
+- **CI Workflow**: Runs on all branches to validate code quality
+  - Linting (ESLint)
+  - Code formatting checks (Prettier)
+  - Unit tests (Vitest)
+  - Security vulnerability scanning
+  - Build verification
+
+- **Deployment Workflow**: Runs on main branch
+  - All CI checks
+  - Builds and deploys to Cloudflare Pages
 
 ## Presentations
 

@@ -1,17 +1,17 @@
 ---
 export async function getStaticPaths() {
-    // スライドデータを読み込み
-    let slides = [];
-    try {
-        slides = await import('../../../data/slides.json').then(module => module.default);
-    } catch (e) {
-        console.warn('スライドデータの読み込みに失敗しました:', e);
-        slides = [{ id: 'sample-presentation' }];
-    }
+  // スライドデータを読み込み
+  let slides = [];
+  try {
+    slides = await import('../../../data/slides.json').then((module) => module.default);
+  } catch (e) {
+    console.warn('スライドデータの読み込みに失敗しました:', e);
+    slides = [{ id: 'sample-presentation' }];
+  }
 
-    return slides.map(slide => ({
-        params: { id: encodeURIComponent(slide.id) }
-    }));
+  return slides.map((slide) => ({
+    params: { id: encodeURIComponent(slide.id) },
+  }));
 }
 
 // リダイレクト：/embed/[id] -> /embed/[id]/1
