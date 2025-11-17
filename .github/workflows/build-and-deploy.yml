@@ -33,6 +33,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Check code formatting
+        run: npm run format:check
+
+      - name: Run tests
+        run: npm test
+
+      - name: Check for vulnerabilities
+        run: npm audit --audit-level=moderate
+
       - name: Install Poppler and other required tools
         run: |
           sudo apt-get update

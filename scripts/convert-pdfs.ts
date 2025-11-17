@@ -7,7 +7,7 @@ import sharp from 'sharp';
 import os from 'os'; // CPUコア数取得用
 import crypto from 'crypto';
 import { create } from 'xmlbuilder2';
-import { pdfToPages } from 'pdf-ts';
+import pdfParse from 'pdf-parse';
 
 // Types
 interface SlideInfo {
@@ -176,14 +176,16 @@ async function createThumbnail(inputPath: string, outputPath: string): Promise<v
 // PDFからテキストを抽出する関数
 async function extractTextFromPdf(pdfPath: string): Promise<string[]> {
     console.log(`Extracting text from ${pdfPath}...`);
-    
+
     try {
         const pdfData = fs.readFileSync(pdfPath);
-        const pages = await pdfToPages(pdfData);
-        
-        // 各ページのテキストを抽出
-        const pageTexts = pages.map(page => page.text);
-        
+        const data = await pdfParse(pdfData);
+
+        // pdf-parseは全体のテキストを返すので、ページごとに分割する
+        // ここでは簡易的に、全テキストを1つのページとして扱う
+        // より詳細なページ分割が必要な場合は、別のライブラリを検討
+        const pageTexts = data.text ? [data.text] : [];
+
         return pageTexts;
     } catch (error) {
         console.error(`テキスト抽出中にエラーが発生しました: ${error}`);
