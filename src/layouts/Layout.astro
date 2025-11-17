@@ -1,16 +1,16 @@
 ---
 interface Props {
-	title: string;
-	description?: string;
-	image?: string;
-	fullWidth?: boolean;
+  title: string;
+  description?: string;
+  image?: string;
+  fullWidth?: boolean;
 }
 
 const {
-	title,
-	description = "tubone's speaker decks",
-	image = "/images/og-image.jpg",
-	fullWidth = false
+  title,
+  description = "tubone's speaker decks",
+  image = '/images/og-image.jpg',
+  fullWidth = false,
 } = Astro.props;
 
 // メタデータの生成
@@ -18,142 +18,153 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = new URL(image, Astro.site);
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-	<base href={import.meta.env.BASE_URL}>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-	<meta name="generator" content={Astro.generator} />
+  <head>
+    <base href={import.meta.env.BASE_URL} />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
 
-	<!-- SEO -->
-	<title>{title}</title>
-	<meta name="description" content={description} />
-	<link rel="canonical" href={canonicalURL} />
+    <!-- SEO -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
 
-	<!-- Open Graph / Facebook -->
-	<meta property="og:type" content="website" />
-	<meta property="og:url" content={canonicalURL} />
-	<meta property="og:title" content={title} />
-	<meta property="og:description" content={description} />
-	<meta property="og:image" content={ogImageURL} />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageURL} />
 
-	<!-- Twitter -->
-	<meta property="twitter:card" content="summary_large_image" />
-	<meta property="twitter:url" content={canonicalURL} />
-	<meta property="twitter:title" content={title} />
-	<meta property="twitter:description" content={description} />
-	<meta property="twitter:image" content={ogImageURL} />
-	
-	<!-- RSS -->
-	<link rel="alternate" type="application/rss+xml" title="RSS フィード" href="/rss.xml" />
-</head>
-<body>
-{/* スライドプレビュー時（fullWidth=true）の場合はヘッダーを表示しない */}
-{!fullWidth && (
-	<header class="site-header">
-		<div class="container">
-			<a href="/" class="logo">tubone's speaker deck</a>
-		</div>
-	</header>
-)}
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={ogImageURL} />
 
-<main class={`main-content ${fullWidth ? 'full-width' : 'container'}`}>
-	<slot />
-</main>
+    <!-- RSS -->
+    <link rel="alternate" type="application/rss+xml" title="RSS フィード" href="/rss.xml" />
+  </head>
+  <body>
+    {/* スライドプレビュー時（fullWidth=true）の場合はヘッダーを表示しない */}
+    {
+      !fullWidth && (
+        <header class="site-header">
+          <div class="container">
+            <a href="/" class="logo">
+              tubone's speaker deck
+            </a>
+          </div>
+        </header>
+      )
+    }
 
-{/* スライドプレビュー時（fullWidth=true）の場合はフッターを表示しない */}
-{!fullWidth && (
-	<footer class="site-footer">
-		<div class="container">
-			<p>
-				&copy; {new Date().getFullYear()} tubone24 
-				<span class="footer-links">
-					<a href="/rss.xml" class="rss-link">RSS</a>
-				</span>
-			</p>
-		</div>
-	</footer>
-)}
-</body>
+    <main class={`main-content ${fullWidth ? 'full-width' : 'container'}`}>
+      <slot />
+    </main>
+
+    {/* スライドプレビュー時（fullWidth=true）の場合はフッターを表示しない */}
+    {
+      !fullWidth && (
+        <footer class="site-footer">
+          <div class="container">
+            <p>
+              &copy; {new Date().getFullYear()} tubone24
+              <span class="footer-links">
+                <a href="/rss.xml" class="rss-link">
+                  RSS
+                </a>
+              </span>
+            </p>
+          </div>
+        </footer>
+      )
+    }
+  </body>
 </html>
 
 <style>
-	:root {
-		--color-primary: #3498db;
-		--color-secondary: #2c3e50;
-		--color-background: #f5f5f5;
-		--color-text: #333;
-	}
+  :root {
+    --color-primary: #3498db;
+    --color-secondary: #2c3e50;
+    --color-background: #f5f5f5;
+    --color-text: #333;
+  }
 
-	*, *::before, *::after {
-		box-sizing: border-box;
-	}
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
-	body {
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-		margin: 0;
-		padding: 0;
-		background-color: var(--color-background);
-		color: var(--color-text);
-		line-height: 1.6;
-	}
+  body {
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.6;
+  }
 
-	.site-header {
-		background-color: var(--color-secondary);
-		color: white;
-		padding: 1rem 0;
-	}
+  .site-header {
+    background-color: var(--color-secondary);
+    color: white;
+    padding: 1rem 0;
+  }
 
-	.logo {
-		font-size: 1.5rem;
-		font-weight: bold;
-		color: white;
-		text-decoration: none;
-	}
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+  }
 
-	.container {
-		width: 100%;
-		max-width: 1200px;
-		margin: 0 auto;
-		padding: 0 1rem;
-	}
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
 
-	.main-content {
-		min-height: calc(100vh - 130px);
-		padding: 2rem 0;
-	}
+  .main-content {
+    min-height: calc(100vh - 130px);
+    padding: 2rem 0;
+  }
 
-	.full-width {
-		padding: 0;
-		width: 100%;
-		max-width: none;
-		min-height: 100vh;
-	}
+  .full-width {
+    padding: 0;
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+  }
 
-	.site-footer {
-		background-color: var(--color-secondary);
-		color: white;
-		padding: 1rem 0;
-		text-align: center;
-	}
-	
-	.footer-links {
-		margin-left: 1rem;
-	}
-	
-	.rss-link {
-		color: #FFA500;
-		text-decoration: none;
-		font-size: 0.9rem;
-		padding: 0.2rem 0.5rem;
-		border-radius: 3px;
-		transition: background-color 0.2s ease;
-	}
-	
-	.rss-link:hover {
-		background-color: rgba(255, 165, 0, 0.2);
-		text-decoration: underline;
-	}
+  .site-footer {
+    background-color: var(--color-secondary);
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+  }
+
+  .footer-links {
+    margin-left: 1rem;
+  }
+
+  .rss-link {
+    color: #ffa500;
+    text-decoration: none;
+    font-size: 0.9rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+  }
+
+  .rss-link:hover {
+    background-color: rgba(255, 165, 0, 0.2);
+    text-decoration: underline;
+  }
 </style>
