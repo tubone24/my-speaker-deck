@@ -7,7 +7,7 @@ import sharp from 'sharp';
 import os from 'os'; // CPUコア数取得用
 import crypto from 'crypto';
 import { create } from 'xmlbuilder2';
-import pdfParse from 'pdf-parse';
+import { PDFParse } from 'pdf-parse';
 
 // Types
 interface SlideInfo {
@@ -186,14 +186,15 @@ async function extractTextFromPdf(pdfPath: string): Promise<string[]> {
 
   try {
     const pdfData = fs.readFileSync(pdfPath);
-    const data = await pdfParse(pdfData);
+    const parser = new PDFParse({ data: pdfData });
+    const data = await parser.getText();
+    await parser.destroy();
 
-    // pdf-parseは全体のテキストを返すので、ページごとに分割する
-    // ここでは簡易的に、全テキストを1つのページとして扱う
-    // より詳細なページ分割が必要な場合は、別のライブラリを検討
-    const pageTexts = data.text ? [data.text] : [];
-
-    return pageTexts;
+    // TextResult.pages にページごとのテキストが入っている
+    if (data.pages && data.pages.length > 0) {
+      return data.pages.map((page) => page.text);
+    }
+    return data.text ? [data.text] : [];
   } catch (error) {
     console.error(`テキスト抽出中にエラーが発生しました: ${error}`);
     return [];
@@ -286,10 +287,13 @@ async function processPdf(pdfFile: string): Promise<SlideInfo> {
     id: slideId,
     originalId: originalId,
     title:
-      metadata.title || originalId.replace(/[-_]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
-    description: metadata.description || '',
-    date: metadata.date ? new Date(metadata.date).toISOString() : stats.mtime.toISOString(),
-    location: metadata.location || null,
+      (metadata.title as string | undefined) ||
+      originalId.replace(/[-_]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
+    description: (metadata.description as string | undefined) || '',
+    date: metadata.date
+      ? new Date(metadata.date as string | number).toISOString()
+      : stats.mtime.toISOString(),
+    location: (metadata.location as { text: string; url: string } | null | undefined) ?? null,
     thumbnail: `/images/slides/${slideId}/thumb.jpg`,
     pageCount: pageCount,
     pdfPath: `/pdfs/${filename}`,

@@ -5,47 +5,22 @@
     <link>https://slide-tubone24.pages.dev</link>
     <description>PDF slides converted to images</description>
     <language>ja</language>
-    <lastBuildDate>Fri, 24 Oct 2025 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 24 Apr 2026 00:00:00 GMT</lastBuildDate>
     <atom:link href="https://slide-tubone24.pages.dev/rss.xml" rel="self" type="application/rss+xml"/>
     <item>
-      <title>MastraでAIエージェントに入門しよう</title>
-      <link>https://slide-tubone24.pages.dev/slides/mastraai</link>
-      <guid isPermaLink="true">https://slide-tubone24.pages.dev/slides/mastraai</guid>
-      <pubDate>Fri, 24 Oct 2025 00:00:00 GMT</pubDate>
+      <title>Claude Codeの動きをLangfuseで見てみよう</title>
+      <link>https://slide-tubone24.pages.dev/slides/claude-code-langfuse</link>
+      <guid isPermaLink="true">https://slide-tubone24.pages.dev/slides/claude-code-langfuse</guid>
+      <pubDate>Fri, 24 Apr 2026 00:00:00 GMT</pubDate>
       <description>
                 &lt;div&gt;
-                    &lt;img src="https://slide-tubone24.pages.dev/images/slides/mastraai/thumb.jpg" alt="MastraでAIエージェントに入門しよう" /&gt;
-                    &lt;p&gt;「AIエージェント開発/運用入門」出版記念 〜AIエージェント元年！もう「使う」のは当たり前。「作れる」エンジニアになろう〜 でおはなししたものです。&lt;/p&gt;
-                    &lt;p&gt;M
-a
-s
-t
-r
-a
-で
-A
-I
-エ
-ー
-ジ
-ェ
-ン
-ト
-に
-入
-門
-し
-よ
-う
-Mastraで
-AIエージェントに
-入門しよう
-難しい？
-でもわかる！？
-難しい？
-でもわかる！？...&lt;/p&gt;
-                    &lt;p&gt;スライド枚数: 33枚&lt;/p&gt;
-                    &lt;p&gt;場所: &lt;a href="https://findy-code.io/events/Ees4PRYPsR1QQ"&gt;「AIエージェント開発/運用入門」出版記念 〜AIエージェント元年！もう「使う」のは当たり前。「作れる」エンジニアになろう〜&lt;/a&gt;&lt;/p&gt;
+                    &lt;img src="https://slide-tubone24.pages.dev/images/slides/claude-code-langfuse/thumb.jpg" alt="Claude Codeの動きをLangfuseで見てみよう" /&gt;
+                    &lt;p&gt;Claude Codeの動きをLangfuseで見てみようというゆるふわ登壇&lt;/p&gt;
+                    &lt;p&gt;Langfuse Night #5
+Claude Codeの動きを
+Langfuseで見てみよう...&lt;/p&gt;
+                    &lt;p&gt;スライド枚数: 101枚&lt;/p&gt;
+                    &lt;p&gt;場所: &lt;a href="https://langfuse.connpass.com/event/387257/"&gt;Langfuse Night #5 COO &amp; CTO 来日+ 特別アナウンスメント！&lt;/a&gt;&lt;/p&gt;
                 &lt;/div&gt;
             </description>
     </item>
@@ -58,11 +33,7 @@ AIエージェントに
                 &lt;div&gt;
                     &lt;img src="https://slide-tubone24.pages.dev/images/slides/mcp/thumb.jpg" alt="MCP技術深堀り" /&gt;
                     &lt;p&gt;MCP技術深堀りの勉強会資料です。&lt;/p&gt;
-                    &lt;p&gt;MCP
-勉強会
-–
-技術深堀り
--
+                    &lt;p&gt;MCP勉強会 	–技術深堀り-
 2025.7.24...&lt;/p&gt;
                     &lt;p&gt;スライド枚数: 21枚&lt;/p&gt;
                     &lt;p&gt;場所: &lt;a href=""&gt;MCP技術深堀り&lt;/a&gt;&lt;/p&gt;
@@ -78,8 +49,7 @@ AIエージェントに
                 &lt;div&gt;
                     &lt;img src="https://slide-tubone24.pages.dev/images/slides/authmcp/thumb.jpg" alt="MCPにおける認証・認可" /&gt;
                     &lt;p&gt;MCPにおける認証・認可&lt;/p&gt;
-                    &lt;p&gt;MCP
-における認証・認可
+                    &lt;p&gt;MCPにおける認証・認可
 2025.6.13...&lt;/p&gt;
                     &lt;p&gt;スライド枚数: 35枚&lt;/p&gt;
                     &lt;p&gt;場所: &lt;a href=""&gt;MCPにおける認証・認可&lt;/a&gt;&lt;/p&gt;
@@ -101,32 +71,8 @@ RUMを統合して
 AIエージェントの
 分析を加速させる
 Presented by tubone24
-こ
-の
-プ
-レ
-ゼ
-ン
-テ
-ー
-シ
-ョ
-ン
-に
-は
-プ
-ロ
-モ
-ー
-シ
-ョ
-ン
-が
-含
-ま
-れ
-ま
-す...&lt;/p&gt;
+このプレゼンテーションには
+プロモーションが含まれます...&lt;/p&gt;
                     &lt;p&gt;スライド枚数: 48枚&lt;/p&gt;
                     &lt;p&gt;場所: &lt;a href="https://www.meetup.com/ja-JP/clickhouse-tokyo-user-group/events/307689645/"&gt;ClickHouse (クリックハウス) Tokyo Meetup - AIナイト！&lt;/a&gt;&lt;/p&gt;
                 &lt;/div&gt;
@@ -142,7 +88,7 @@ Presented by tubone24
                     &lt;img src="https://slide-tubone24.pages.dev/images/slides/slide-0a92b4/thumb.jpg" alt="キャリアの育て方" /&gt;
                     &lt;p&gt;KAGエンジニア内々定者イベント(2026新卒)でのLTです&lt;/p&gt;
                     &lt;p&gt;KAG内定者イベント
-キャリアの育て方...&lt;/p&gt;
+キ ャ リ ア の 育 て ⽅...&lt;/p&gt;
                     &lt;p&gt;スライド枚数: 26枚&lt;/p&gt;
                     &lt;p&gt;場所: &lt;a href="https://recruit.kddi-agile.com/"&gt;KAGエンジニア内々定者イベント(26新卒)&lt;/a&gt;&lt;/p&gt;
                 &lt;/div&gt;
@@ -194,9 +140,9 @@ Yu Otsubo
                     &lt;p&gt;Langfuse v3 使ってますか？
 L a n g f u s e
 2 0 2 5
-Langfuse
-Night #1
-Y U   O T S U B O...&lt;/p&gt;
+L a n g f u s e
+N i g h t # 1
+Y U O T S U B O...&lt;/p&gt;
                     &lt;p&gt;スライド枚数: 31枚&lt;/p&gt;
                     &lt;p&gt;場所: &lt;a href="https://langfuse.connpass.com/event/340099/"&gt;Langfuse Night #1&lt;/a&gt;&lt;/p&gt;
                 &lt;/div&gt;
@@ -212,13 +158,12 @@ Y U   O T S U B O...&lt;/p&gt;
                     &lt;img src="https://slide-tubone24.pages.dev/images/slides/amazon-ecs/thumb.jpg" alt="【お子さま向け】Amazon ECS サービスディスカバリーって知ってる？【楽しい読み聞かせ】" /&gt;
                     &lt;p&gt;恐竜くんと楽しいAWSの冒険をしよう！&lt;/p&gt;
                     &lt;p&gt;AmazonECS
-
-サービスディスカバリー
+サービスディスカバリー
 って知ってる？
 #しむそくRadio 新春！冬休みの宿題LT
 スペシャル
-こどものよみきかせ風
-あまぞん いーしーえす
+こどものよみきかせ⾵
+あまぞん 	いーしーえす
 ふう
 し
 作: tubone24...&lt;/p&gt;
@@ -266,12 +211,12 @@ tubone24
     </item>
     <item>
       <title>インフラとバックエンドとフロントエンドをくまなく調べて遅いアプリを早くした件</title>
-      <link>https://slide-tubone24.pages.dev/slides/slide-4a227d</link>
-      <guid isPermaLink="true">https://slide-tubone24.pages.dev/slides/slide-4a227d</guid>
+      <link>https://slide-tubone24.pages.dev/slides/slide-8007b8</link>
+      <guid isPermaLink="true">https://slide-tubone24.pages.dev/slides/slide-8007b8</guid>
       <pubDate>Thu, 14 Nov 2024 00:00:00 GMT</pubDate>
       <description>
                 &lt;div&gt;
-                    &lt;img src="https://slide-tubone24.pages.dev/images/slides/slide-4a227d/thumb.jpg" alt="インフラとバックエンドとフロントエンドをくまなく調べて遅いアプリを早くした件" /&gt;
+                    &lt;img src="https://slide-tubone24.pages.dev/images/slides/slide-8007b8/thumb.jpg" alt="インフラとバックエンドとフロントエンドをくまなく調べて遅いアプリを早くした件" /&gt;
                     &lt;p&gt;NW-JAWS #13 ～re:Inventに行く前に振り返り～ で話したLTです。&lt;/p&gt;
                     &lt;p&gt;...&lt;/p&gt;
                     &lt;p&gt;スライド枚数: 49枚&lt;/p&gt;
@@ -289,8 +234,7 @@ tubone24
                     &lt;img src="https://slide-tubone24.pages.dev/images/slides/agent/thumb.jpg" alt="Agentは楽しいぞ" /&gt;
                     &lt;p&gt;Bedrock Claude Night 2（JAWS-UG AI/ML支部 × 東京支部コラボ）で喋ったやつ。&lt;/p&gt;
                     &lt;p&gt;Bedrock Claude Night2! 
-Agent
-׊ְ׃嚂כ
+Agent׊ְ׃嚂כ
 tubone24 
 (@meitante1conan)...&lt;/p&gt;
                     &lt;p&gt;スライド枚数: 36枚&lt;/p&gt;
