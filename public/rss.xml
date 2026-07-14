@@ -5,8 +5,46 @@
     <link>https://slide-tubone24.pages.dev</link>
     <description>PDF slides converted to images</description>
     <language>ja</language>
-    <lastBuildDate>Fri, 24 Apr 2026 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 14 Jul 2026 00:00:00 GMT</lastBuildDate>
     <atom:link href="https://slide-tubone24.pages.dev/rss.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Mastra入門</title>
+      <link>https://slide-tubone24.pages.dev/slides/mastra</link>
+      <guid isPermaLink="true">https://slide-tubone24.pages.dev/slides/mastra</guid>
+      <pubDate>Tue, 14 Jul 2026 00:00:00 GMT</pubDate>
+      <description>
+                &lt;div&gt;
+                    &lt;img src="https://slide-tubone24.pages.dev/images/slides/mastra/thumb.jpg" alt="Mastra入門" /&gt;
+                    &lt;p&gt;TypeScriptで開発するAIエージェントの裏側 〜KAG社の実践知から学ぶMastra〜&lt;/p&gt;
+                    &lt;p&gt;Mastra
+AIエージェントを“使う”から“作る”へ。 — TypeScript で。
+入門
+──── press → to start
+【出版記念！ランチイベント】Mastra による AI エージェント開発運用実践入門...&lt;/p&gt;
+                    &lt;p&gt;スライド枚数: 24枚&lt;/p&gt;
+                    &lt;p&gt;場所: &lt;a href="https://findy.connpass.com/event/396881/"&gt;TypeScriptで開発するAIエージェントの裏側 〜KAG社の実践知から学ぶMastra〜&lt;/a&gt;&lt;/p&gt;
+                &lt;/div&gt;
+            </description>
+    </item>
+    <item>
+      <title>MCP Appsに入門しよう</title>
+      <link>https://slide-tubone24.pages.dev/slides/mcpapps</link>
+      <guid isPermaLink="true">https://slide-tubone24.pages.dev/slides/mcpapps</guid>
+      <pubDate>Mon, 13 Jul 2026 00:00:00 GMT</pubDate>
+      <description>
+                &lt;div&gt;
+                    &lt;img src="https://slide-tubone24.pages.dev/images/slides/mcpapps/thumb.jpg" alt="MCP Appsに入門しよう" /&gt;
+                    &lt;p&gt;KAG AI WEEK Summer Day1 ~ランチタイムにAIを浴びる！5日間連続LT~でしゃべったやつ&lt;/p&gt;
+                    &lt;p&gt;MCP Apps 	に
+しよう！	入門
+つぼね（@tubone24）
+ソフトウェアエンジニア ──── press → to start
+KAG AI Week 2026...&lt;/p&gt;
+                    &lt;p&gt;スライド枚数: 22枚&lt;/p&gt;
+                    &lt;p&gt;場所: &lt;a href="https://kddi-agile.connpass.com/event/395847/"&gt;KAG AI WEEK Summer Day1 ~ランチタイムにAIを浴びる！5日間連続LT~&lt;/a&gt;&lt;/p&gt;
+                &lt;/div&gt;
+            </description>
+    </item>
     <item>
       <title>Claude Codeの動きをLangfuseで見てみよう</title>
       <link>https://slide-tubone24.pages.dev/slides/claude-code-langfuse</link>
@@ -239,25 +277,6 @@ tubone24 
 (@meitante1conan)...&lt;/p&gt;
                     &lt;p&gt;スライド枚数: 36枚&lt;/p&gt;
                     &lt;p&gt;場所: &lt;a href="https://jawsug-ai.connpass.com/event/319748/"&gt;Bedrock Claude Night 2（JAWS-UG AI/ML支部 × 東京支部コラボ）&lt;/a&gt;&lt;/p&gt;
-                &lt;/div&gt;
-            </description>
-    </item>
-    <item>
-      <title>MCP Appsに入門しよう</title>
-      <link>https://slide-tubone24.pages.dev/slides/mcpapps</link>
-      <guid isPermaLink="true">https://slide-tubone24.pages.dev/slides/mcpapps</guid>
-      <pubDate>Tue, 18 Jun 2024 00:00:00 GMT</pubDate>
-      <description>
-                &lt;div&gt;
-                    &lt;img src="https://slide-tubone24.pages.dev/images/slides/mcpapps/thumb.jpg" alt="MCP Appsに入門しよう" /&gt;
-                    &lt;p&gt;KAG AI WEEK Summer Day1 ~ランチタイムにAIを浴びる！5日間連続LT~でしゃべったやつ&lt;/p&gt;
-                    &lt;p&gt;MCP Apps 	に
-しよう！	入門
-つぼね（@tubone24）
-ソフトウェアエンジニア ──── press → to start
-KAG AI Week 2026...&lt;/p&gt;
-                    &lt;p&gt;スライド枚数: 22枚&lt;/p&gt;
-                    &lt;p&gt;場所: &lt;a href="https://kddi-agile.connpass.com/event/395847/"&gt;KAG AI WEEK Summer Day1 ~ランチタイムにAIを浴びる！5日間連続LT~&lt;/a&gt;&lt;/p&gt;
                 &lt;/div&gt;
             </description>
     </item>
