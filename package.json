@@ -19,7 +19,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "astro": "^5.15.8",
+    "astro": "^5.15.9",
     "pdf-lib": "^1.17.1",
     "pdf-parse": "^2.4.5",
     "sharp": "^0.34.5",
