@@ -5,7 +5,7 @@ import SlideViewer from '../../../components/SlideViewer.astro';
 // getStaticPaths関数を追加（ビルド時に生成するパスを定義）
 export async function getStaticPaths() {
   // スライドデータを読み込み
-  let slides = [];
+  let slides;
   try {
     slides = await import('../../../data/slides.json').then((module) => module.default);
   } catch (e) {
@@ -84,14 +84,16 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
 
     <div class="progress-bar-container">
       <div class="progress-bar" style={`width: ${(currentPage / slide.pageCount) * 100}%`}></div>
-      <div class="progress-counter">{currentPage} / {slide.pageCount}</div>
+      <div class="progress-counter">
+        {currentPage} / {slide.pageCount}
+      </div>
     </div>
 
     <div class="embed-controls">
       <a
-        href={currentPage > 1
-          ? `${import.meta.env.BASE_URL}/embed/${slide.id}/${currentPage - 1}`
-          : '#'}
+        href={
+          currentPage > 1 ? `${import.meta.env.BASE_URL}/embed/${slide.id}/${currentPage - 1}` : '#'
+        }
         class="btn btn-icon"
         aria-disabled={currentPage <= 1}
         aria-label="前のスライド"
@@ -114,9 +116,11 @@ const pageTitle = `${slide.title} - ページ ${currentPage}/${slide.pageCount}`
       </a>
 
       <a
-        href={currentPage < slide.pageCount
-          ? `${import.meta.env.BASE_URL}/embed/${slide.id}/${currentPage + 1}`
-          : '#'}
+        href={
+          currentPage < slide.pageCount
+            ? `${import.meta.env.BASE_URL}/embed/${slide.id}/${currentPage + 1}`
+            : '#'
+        }
         class="btn btn-icon"
         aria-disabled={currentPage >= slide.pageCount}
         aria-label="次のスライド"

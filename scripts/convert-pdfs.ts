@@ -41,9 +41,13 @@ const PDF_DIR = path.join(rootDir, 'public/pdfs');
 const IMAGE_DIR = path.join(rootDir, 'public/images/slides');
 const DATA_DIR = path.join(rootDir, 'src/data');
 const RSS_DIR = path.join(rootDir, 'public');
+// 変換結果のキャッシュ情報（CIではactions/cacheで画像ディレクトリと一緒に保存・復元する）
+const CACHE_MANIFEST_PATH = path.join(rootDir, '.cache/convert-manifest.json');
 const THUMB_SIZE: ThumbSize = { width: 300, height: 200 };
 const IMAGE_QUALITY = 90;
 const DPI = 200;
+// 画像生成の設定が変わったらキャッシュを無効化するためのバージョン
+const CONVERTER_VERSION = `v1-dpi${DPI}-q${IMAGE_QUALITY}-thumb${THUMB_SIZE.width}x${THUMB_SIZE.height}`;
 
 // RSS設定
 const SITE_TITLE = 'PDF Slideshow';
@@ -55,6 +59,43 @@ const MAX_CONCURRENT_PDFS = Math.max(1, os.cpus().length - 1);
 
 // スライド情報を保存するリスト
 const slidesData: SlideInfo[] = [];
+
+// PDFごとの変換キャッシュ
+interface CacheEntry {
+  hash: string;
+  pageCount: number;
+  thumbnails: string[];
+  pageTexts: string[];
+}
+type CacheManifest = Record<string, CacheEntry>;
+
+function loadCacheManifest(): CacheManifest {
+  try {
+    return JSON.parse(fs.readFileSync(CACHE_MANIFEST_PATH, 'utf8')) as CacheManifest;
+  } catch {
+    return {};
+  }
+}
+
+function saveCacheManifest(manifest: CacheManifest): void {
+  ensureDir(path.dirname(CACHE_MANIFEST_PATH));
+  fs.writeFileSync(CACHE_MANIFEST_PATH, JSON.stringify(manifest, null, 2));
+}
+
+// PDFの内容と変換設定からキャッシュキーを作成
+function computePdfHash(pdfBytes: Uint8Array): string {
+  return crypto.createHash('sha256').update(CONVERTER_VERSION).update(pdfBytes).digest('hex');
+}
+
+// キャッシュが有効か（ハッシュが一致し、画像ファイルが揃っているか）
+function isCacheValid(entry: CacheEntry | undefined, hash: string, slideDir: string): boolean {
+  if (!entry || entry.hash !== hash) return false;
+  const requiredFiles = ['thumb.jpg'];
+  for (let i = 1; i <= entry.pageCount; i++) {
+    requiredFiles.push(`${i}.jpg`, `thumb-${i}.jpg`);
+  }
+  return requiredFiles.every((file) => fs.existsSync(path.join(slideDir, file)));
+}
 
 // ファイル名をURL安全なIDに変換する関数
 function generateSafeId(filename: string): string {
@@ -202,20 +243,53 @@ async function extractTextFromPdf(pdfPath: string): Promise<string[]> {
 }
 
 // 単一のPDFを処理する関数
-async function processPdf(pdfFile: string): Promise<SlideInfo> {
+async function processPdf(pdfFile: string, cache: CacheManifest): Promise<SlideInfo> {
   const filename = path.basename(pdfFile);
   const originalId = path.basename(filename, '.pdf');
   // URL安全なIDを生成
   const slideId = generateSafeId(originalId);
   const slideDir = path.join(IMAGE_DIR, slideId);
 
-  // スライド用のディレクトリを作成
+  // メタデータを読み込み（キャッシュ対象外なので毎回読む）
+  const metadata = await loadMetadataFromJson(pdfFile);
+  const stats = fs.statSync(pdfFile);
+  const buildSlideInfo = (
+    pageCount: number,
+    thumbnails: string[],
+    pageTexts: string[]
+  ): SlideInfo => ({
+    id: slideId,
+    originalId: originalId,
+    title:
+      (metadata.title as string | undefined) ||
+      originalId.replace(/[-_]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
+    description: (metadata.description as string | undefined) || '',
+    date: metadata.date
+      ? new Date(metadata.date as string | number).toISOString()
+      : stats.mtime.toISOString(),
+    location: (metadata.location as { text: string; url: string } | null | undefined) ?? null,
+    thumbnail: `/images/slides/${slideId}/thumb.jpg`,
+    pageCount: pageCount,
+    pdfPath: `/pdfs/${filename}`,
+    thumbnails: thumbnails,
+    pageTexts: pageTexts,
+  });
+
+  const pdfBytes = fs.readFileSync(pdfFile);
+  const hash = computePdfHash(pdfBytes);
+  const cached = cache[slideId];
+  if (isCacheValid(cached, hash, slideDir)) {
+    console.log(`Skipping ${filename} (unchanged, using cache)`);
+    return buildSlideInfo(cached.pageCount, cached.thumbnails, cached.pageTexts);
+  }
+
+  // 古い生成物が残らないようにディレクトリを作り直す
+  fs.rmSync(slideDir, { recursive: true, force: true });
   ensureDir(slideDir);
 
   console.log(`Converting ${filename} to images...`);
 
   // PDFのメタデータを取得
-  const pdfBytes = fs.readFileSync(pdfFile);
   const pdfDoc = await PDFDocument.load(pdfBytes);
   const pageCount = pdfDoc.getPageCount();
 
@@ -278,28 +352,23 @@ async function processPdf(pdfFile: string): Promise<SlideInfo> {
     await createThumbnail(firstJpgPath, thumbPath);
   }
 
-  // メタデータを読み込み
-  const metadata = await loadMetadataFromJson(pdfFile);
-  const stats = fs.statSync(pdfFile);
+  cache[slideId] = { hash, pageCount, thumbnails, pageTexts };
 
   // スライド情報を返す（URL安全なIDを使用）
-  return {
-    id: slideId,
-    originalId: originalId,
-    title:
-      (metadata.title as string | undefined) ||
-      originalId.replace(/[-_]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
-    description: (metadata.description as string | undefined) || '',
-    date: metadata.date
-      ? new Date(metadata.date as string | number).toISOString()
-      : stats.mtime.toISOString(),
-    location: (metadata.location as { text: string; url: string } | null | undefined) ?? null,
-    thumbnail: `/images/slides/${slideId}/thumb.jpg`,
-    pageCount: pageCount,
-    pdfPath: `/pdfs/${filename}`,
-    thumbnails: thumbnails,
-    pageTexts: pageTexts,
-  };
+  return buildSlideInfo(pageCount, thumbnails, pageTexts);
+}
+
+// 現在のPDFに対応しない古い画像ディレクトリとキャッシュを削除
+function removeStaleSlides(activeIds: Set<string>, cache: CacheManifest): void {
+  for (const entry of fs.readdirSync(IMAGE_DIR, { withFileTypes: true })) {
+    if (entry.isDirectory() && !activeIds.has(entry.name)) {
+      console.log(`Removing stale slide directory: ${entry.name}`);
+      fs.rmSync(path.join(IMAGE_DIR, entry.name), { recursive: true, force: true });
+    }
+  }
+  for (const id of Object.keys(cache)) {
+    if (!activeIds.has(id)) delete cache[id];
+  }
 }
 
 // RSSフィードを生成する関数
@@ -405,8 +474,10 @@ async function main(): Promise<void> {
     return;
   }
 
+  const cache = loadCacheManifest();
+
   // 各PDFの処理タスクを作成
-  const tasks = pdfFiles.map((pdfFile) => () => processPdf(pdfFile));
+  const tasks = pdfFiles.map((pdfFile) => () => processPdf(pdfFile, cache));
 
   // 開始時間を記録
   const startTime = Date.now();
@@ -416,6 +487,9 @@ async function main(): Promise<void> {
 
   // 結果をスライドデータに追加
   slidesData.push(...results);
+
+  removeStaleSlides(new Set(results.map((slide) => slide.id)), cache);
+  saveCacheManifest(cache);
 
   // スライド情報をJSONファイルに書き出し
   fs.writeFileSync(path.join(DATA_DIR, 'slides.json'), JSON.stringify(slidesData, null, 2));

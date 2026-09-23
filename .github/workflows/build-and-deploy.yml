@@ -1,4 +1,4 @@
-name: Deploy Astro to GitHub Pages
+name: Deploy to Cloudflare Pages
 
 on:
   # デフォルトブランチへのプッシュで実行
@@ -8,11 +8,13 @@ on:
   # Actionsタブから手動実行も可能
   workflow_dispatch:
 
-# GitHub Pagesへのデプロイに必要な権限設定
 permissions:
   contents: read
-  id-token: write
-  deployments: write
+
+# デプロイが並行して走らないようにする
+concurrency:
+  group: deploy
+  cancel-in-progress: false
 
 jobs:
   build-and-deploy:
@@ -21,13 +23,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - name: Install dependencies
@@ -42,16 +41,14 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Install Poppler and other required tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y poppler-utils ghostscript pdftk
+      # 画像・slides.json・rss.xml はリポジトリに含めず、ここで生成する
+      - name: Convert slides
+        uses: ./.github/actions/convert-slides
 
-#      - name: Convert PDFs to images
-#        run: npm run convert
-
-      - name: compress pdf
+      # 変換後に配信用のPDFだけを圧縮する（変換は元の高画質PDFから行う）
+      - name: Compress large PDFs
         run: |
+          sudo apt-get install -y --no-install-recommends ghostscript
           for pdf in public/pdfs/*.pdf; do
             file_size=$(stat -c%s "$pdf")
             if [ "$file_size" -gt $((24 * 1024 * 1024)) ]; then
@@ -60,7 +57,7 @@ jobs:
               # 圧縮したファイルに置き換え
               mv "${pdf%.pdf}_compressed.pdf" "$pdf"
             fi
-           done
+          done
 
       - name: Build Astro site
         run: npm run build
@@ -75,4 +72,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages publish --project-name=slide-tubone24 ./dist
+          command: pages deploy ./dist --project-name=slide-tubone24

@@ -5,24 +5,22 @@ const { images, title, initialPage = 1 } = Astro.props;
 
 <div class="slide-viewer">
   <div class="slides-container">
-    {
-      images.map((image, index) => (
-        <div
-          class="slide-image"
-          role="img"
-          aria-label={`${title} - スライド ${index + 1}`}
-          style={`display: ${index + 1 === initialPage ? 'flex' : 'none'};`}
-        >
-          <img
-            src={image}
-            alt={`スライド ${index + 1}`}
-            loading={
-              index + 1 === initialPage || Math.abs(index + 1 - initialPage) <= 1 ? 'eager' : 'lazy'
-            }
-          />
-        </div>
-      ))
-    }
+    {images.map((image, index) => (
+      <div
+        class="slide-image"
+        role="img"
+        aria-label={`${title} - スライド ${index + 1}`}
+        style={`display: ${index + 1 === initialPage ? 'flex' : 'none'};`}
+      >
+        <img
+          src={image}
+          alt={`スライド ${index + 1}`}
+          loading={
+            index + 1 === initialPage || Math.abs(index + 1 - initialPage) <= 1 ? 'eager' : 'lazy'
+          }
+        />
+      </div>
+    ))}
   </div>
 </div>
 

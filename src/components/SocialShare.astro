@@ -60,26 +60,24 @@ const platformConfig = {
 
 <div class={`social-share ${className}`}>
   <div class="share-buttons">
-    {
-      platforms.map((platform) => {
-        const config = platformConfig[platform];
-        if (!config) return null;
+    {platforms.map((platform) => {
+      const config = platformConfig[platform];
+      if (!config) return null;
 
-        return (
-          <a
-            href={getShareUrl(platform, url, shareText, title)}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="share-button"
-            aria-label={config.label}
-            style={`--platform-color: ${config.color}`}
-            data-platform={platform}
-          >
-            <span class="icon" set:html={config.icon} />
-          </a>
-        );
-      })
-    }
+      return (
+        <a
+          href={getShareUrl(platform, url, shareText, title)}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="share-button"
+          aria-label={config.label}
+          style={`--platform-color: ${config.color}`}
+          data-platform={platform}
+        >
+          <span class="icon" set:html={config.icon} />
+        </a>
+      );
+    })}
   </div>
 </div>
 

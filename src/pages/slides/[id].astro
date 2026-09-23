@@ -1,7 +1,7 @@
 ---
 export async function getStaticPaths() {
   // スライドデータを読み込み
-  let slides = [];
+  let slides;
   try {
     slides = await import('../../data/slides.json').then((module) => module.default);
   } catch (e) {

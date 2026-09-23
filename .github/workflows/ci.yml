@@ -1,10 +1,18 @@
 name: CI - Tests, Linting & Security
 
+# main へのプッシュは build-and-deploy.yml で同じチェックを行うため、PR時のみ実行する
 on:
-  push:
-    branches: ["**"]
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# 同じブランチで新しいコミットが来たら古い実行をキャンセルする
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test-and-lint:
@@ -17,7 +25,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - name: Install dependencies
@@ -34,6 +42,9 @@ jobs:
 
       - name: Check for vulnerabilities
         run: npm audit --audit-level=moderate
+
+      - name: Convert slides
+        uses: ./.github/actions/convert-slides
 
       - name: Build project
         run: npm run build

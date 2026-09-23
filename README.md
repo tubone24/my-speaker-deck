@@ -35,6 +35,7 @@ This project is built with Astro, a modern static site generator that delivers l
 | Command                 | Action                                           |
 | ----------------------- | ------------------------------------------------ |
 | `npm install`           | Installs dependencies                            |
+| `npm run convert`       | Convert PDFs in `public/pdfs` to images/data     |
 | `npm run dev`           | Starts local dev server at `localhost:4321`      |
 | `npm run build`         | Build production site to `./dist/`               |
 | `npm run preview`       | Preview build locally before deploying           |
@@ -61,7 +62,7 @@ This project includes comprehensive testing and code quality tools:
 
 This repository uses GitHub Actions for CI/CD:
 
-- **CI Workflow**: Runs on all branches to validate code quality
+- **CI Workflow**: Runs on pull requests to validate code quality
   - Linting (ESLint)
   - Code formatting checks (Prettier)
   - Unit tests (Vitest)
@@ -70,7 +71,15 @@ This repository uses GitHub Actions for CI/CD:
 
 - **Deployment Workflow**: Runs on main branch
   - All CI checks
+  - Converts PDFs to images
   - Builds and deploys to Cloudflare Pages
+
+### Adding Slides
+
+Slide images (`public/images/slides/`), `src/data/slides.json` and `public/rss.xml` are generated in CI and are not committed.
+To add a presentation, just commit the PDF and its metadata JSON to `public/pdfs/` and push.
+
+Converted images are cached per PDF (keyed by the PDF's hash), so only new or updated PDFs are converted in CI.
 
 ## Presentations
 
@@ -100,6 +109,9 @@ cd my-speaker-deck
 
 # Install dependencies
 npm install
+
+# Convert PDFs (requires Poppler: `brew install poppler` / `apt-get install poppler-utils`)
+npm run convert
 
 # Start development server
 npm run dev
