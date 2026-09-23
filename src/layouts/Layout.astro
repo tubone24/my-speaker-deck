@@ -51,39 +51,35 @@ const ogImageURL = new URL(image, Astro.site);
   </head>
   <body>
     {/* スライドプレビュー時（fullWidth=true）の場合はヘッダーを表示しない */}
-    {
-      !fullWidth && (
-        <header class="site-header">
-          <div class="container">
-            <a href="/" class="logo">
-              tubone's speaker deck
-            </a>
-          </div>
-        </header>
-      )
-    }
+    {!fullWidth && (
+      <header class="site-header">
+        <div class="container">
+          <a href="/" class="logo">
+            tubone's speaker deck
+          </a>
+        </div>
+      </header>
+    )}
 
     <main class={`main-content ${fullWidth ? 'full-width' : 'container'}`}>
       <slot />
     </main>
 
     {/* スライドプレビュー時（fullWidth=true）の場合はフッターを表示しない */}
-    {
-      !fullWidth && (
-        <footer class="site-footer">
-          <div class="container">
-            <p>
-              &copy; {new Date().getFullYear()} tubone24
-              <span class="footer-links">
-                <a href="/rss.xml" class="rss-link">
-                  RSS
-                </a>
-              </span>
-            </p>
-          </div>
-        </footer>
-      )
-    }
+    {!fullWidth && (
+      <footer class="site-footer">
+        <div class="container">
+          <p>
+            &copy; {new Date().getFullYear()} tubone24
+            <span class="footer-links">
+              <a href="/rss.xml" class="rss-link">
+                RSS
+              </a>
+            </span>
+          </p>
+        </div>
+      </footer>
+    )}
   </body>
 </html>
 

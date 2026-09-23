@@ -1,0 +1,28 @@
+name: Convert slides
+description: PDFを画像・スライドデータ・RSSに変換する（変更のないPDFはキャッシュを再利用）
+
+runs:
+  using: composite
+  steps:
+    - name: Install Poppler
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends poppler-utils
+
+    # 変換済み画像とキャッシュ情報を復元する。
+    # PDFが追加・更新された場合も restore-keys で直近のキャッシュを復元し、
+    # 変更のあったPDFだけを変換する（判定は scripts/convert-pdfs.ts が行う）。
+    - name: Restore converted slides cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          public/images/slides
+          .cache/convert-manifest.json
+        key: converted-slides-${{ hashFiles('public/pdfs/*.pdf', 'scripts/convert-pdfs.ts') }}
+        restore-keys: |
+          converted-slides-
+
+    - name: Convert PDFs to images
+      shell: bash
+      run: npm run convert

@@ -20,22 +20,20 @@ const thumbnailsToShow = slide.thumbnails
     <div class="slide-thumbnail-container">
       <img src={slide.thumbnail} alt={slide.title} loading="lazy" class="slide-thumbnail active" />
 
-      {
-        slide.thumbnails &&
-          slide.thumbnails
-            .slice(0, Math.min(5, slide.pageCount))
-            .map(
-              (thumb, index) =>
-                index > 0 && (
-                  <img
-                    src={thumb}
-                    alt={`${slide.title} - スライド ${index + 1}`}
-                    loading="lazy"
-                    class="slide-thumbnail"
-                  />
-                )
-            )
-      }
+      {slide.thumbnails &&
+        slide.thumbnails
+          .slice(0, Math.min(5, slide.pageCount))
+          .map(
+            (thumb, index) =>
+              index > 0 && (
+                <img
+                  src={thumb}
+                  alt={`${slide.title} - スライド ${index + 1}`}
+                  loading="lazy"
+                  class="slide-thumbnail"
+                />
+              )
+          )}
     </div>
     <div class="slide-info">
       <h2 class="slide-title">{slide.title}</h2>

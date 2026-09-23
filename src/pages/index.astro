@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import SlideCard from '../components/SlideCard.astro';
 
 // スライドデータを読み込み
-let slides = [];
+let slides;
 try {
   slides = await import('../data/slides.json').then((module) => module.default);
 } catch (e) {
@@ -33,16 +33,16 @@ const image = 'ogp.png';
   </div>
 
   <div class="slides-grid">
-    {slides.map((slide) => <SlideCard slide={slide} />)}
+    {slides.map((slide) => (
+      <SlideCard slide={slide} />
+    ))}
 
-    {
-      slides.length === 0 && (
-        <div class="no-slides">
-          <p>スライドがありません。</p>
-          <p>PDFをpublic/pdfsフォルダに追加してください。</p>
-        </div>
-      )
-    }
+    {slides.length === 0 && (
+      <div class="no-slides">
+        <p>スライドがありません。</p>
+        <p>PDFをpublic/pdfsフォルダに追加してください。</p>
+      </div>
+    )}
   </div>
 </Layout>
 

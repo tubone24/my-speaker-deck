@@ -5,18 +5,16 @@ const { images, count: _count, currentPage = 1 } = Astro.props;
 
 <div class="thumbnails-container">
   <div class="thumbnails-scroller">
-    {
-      images.map((image, index) => (
-        <a
-          href={`/slides/${Astro.params.id}/${index + 1}`}
-          class={`thumbnail ${index + 1 === currentPage ? 'active' : ''}`}
-          data-index={index}
-        >
-          <img src={image} alt={`サムネイル ${index + 1}`} loading="lazy" />
-          <span class="thumbnail-number">{index + 1}</span>
-        </a>
-      ))
-    }
+    {images.map((image, index) => (
+      <a
+        href={`/slides/${Astro.params.id}/${index + 1}`}
+        class={`thumbnail ${index + 1 === currentPage ? 'active' : ''}`}
+        data-index={index}
+      >
+        <img src={image} alt={`サムネイル ${index + 1}`} loading="lazy" />
+        <span class="thumbnail-number">{index + 1}</span>
+      </a>
+    ))}
   </div>
 </div>
 
