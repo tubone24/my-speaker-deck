@@ -47,7 +47,7 @@ const THUMB_SIZE: ThumbSize = { width: 300, height: 200 };
 const IMAGE_QUALITY = 90;
 const DPI = 200;
 // 画像生成の設定が変わったらキャッシュを無効化するためのバージョン
-const CONVERTER_VERSION = `v1-dpi${DPI}-q${IMAGE_QUALITY}-thumb${THUMB_SIZE.width}x${THUMB_SIZE.height}`;
+const CONVERTER_VERSION = `v2-dpi${DPI}-q${IMAGE_QUALITY}-thumb${THUMB_SIZE.width}x${THUMB_SIZE.height}`;
 
 // RSS設定
 const SITE_TITLE = 'PDF Slideshow';
@@ -192,13 +192,25 @@ async function convertPdfToImages(
     const command = `pdftoppm -png -r ${DPI} "${pdfPath}" "${outputDir}/${slideId}"`;
 
     exec(command, (error, stdout, stderr) => {
+      const filename = path.basename(pdfPath);
       if (error) {
-        console.error(`PDFの変換に失敗しました: ${error.message}`);
+        console.error(`PDFの変換に失敗しました (${filename}): ${error.message}`);
         reject(error);
         return;
       }
+      // 日本語のCMap等（poppler-data）がない環境では文字が描画されない画像になるため失敗扱いにする
+      if (stderr.includes('Missing language pack')) {
+        reject(
+          new Error(
+            `${filename}: 日本語フォントの描画に必要な poppler-data が見つかりません\n${stderr}`
+          )
+        );
+        return;
+      }
       if (stderr) {
-        console.error(`PDFの変換中にエラーが発生: ${stderr}`);
+        // Popplerの警告は変換結果に影響しないことが多いので、重複をまとめて表示するだけにする
+        const lines = [...new Set(stderr.split('\n').filter((line) => line.trim()))];
+        console.warn(`PDFの変換中に警告 (${filename}):\n  ${lines.join('\n  ')}`);
       }
       resolve();
     });
